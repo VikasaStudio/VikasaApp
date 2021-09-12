@@ -24,6 +24,7 @@ import {
 } from '@react-navigation/native';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import GlobalContextProvider from './src/context/GlobalContext';
 
 function HomeScreen() {
   return (
@@ -44,12 +45,16 @@ const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Test" component={TestScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GlobalContextProvider>
+
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Test">
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Test" component={TestScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+
+    </GlobalContextProvider>
   );
 }
 
