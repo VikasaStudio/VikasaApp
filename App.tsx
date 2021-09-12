@@ -25,22 +25,8 @@ import {
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import GlobalContextProvider from './src/context/GlobalContext';
+import AuthScreen from './src/screens/AuthScreen';
 
-function HomeScreen() {
-  return (
-    <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Hello World!</Text>
-    </SafeAreaView>
-  );
-}
-function TestScreen() {
-  return (
-    <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Hello World 2!</Text>
-      <Text>Hello World 2!</Text>
-    </SafeAreaView>
-  );
-}
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -48,33 +34,13 @@ function App() {
     <GlobalContextProvider>
 
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Test">
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Test" component={TestScreen} />
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={AuthScreen} />
         </Stack.Navigator>
       </NavigationContainer>
 
     </GlobalContextProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
