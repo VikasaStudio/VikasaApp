@@ -14,6 +14,7 @@ import {
     Alert
   } from 'react-native';
 import globalStyle from '../styles/GlobalStyle';
+import CustomSwitch from '../components/CustomSwitch';
 export default function(){
     
     const [switchPosition, setSwitchPosition] = useState(1);
@@ -38,49 +39,9 @@ export default function(){
                 flexDirection: "column", 
                 alignItems: "center", 
                 justifyContent: "space-around"}} >
-                <View style={{
-                    flexDirection: "row", 
-                    justifyContent: 'center', 
-                    borderRadius: 40,
-                    borderWidth: 1,
-                    borderColor: "#2a264a",
-                    height: 35, width: 250, 
-                    backgroundColor: "#2a264a"}}>
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => changeSwitchPosition(1)}
-                        style={{
-                            flex: 1,
-                            backgroundColor: switchPosition == 1 ? '#796edb' : '#2a264a',
-                            borderRadius: 40,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}>
-                        <Text
-                            style={{
-                            color: switchPosition == 1 ? 'white' : 'grey',
-                            }}>
-                            LogIn
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => changeSwitchPosition(2)}
-                        style={{
-                            flex: 1,
-                            backgroundColor: switchPosition == 2 ? '#796edb' : '#2a264a',
-                            borderRadius: 40,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}>
-                        <Text
-                            style={{
-                            color: switchPosition == 2 ? 'white' : 'grey',
-                            }}>
-                            SignUp
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+
+                <CustomSwitch leftButtonText="Login" rightButtonText="Sign-Up" onStateChange={(val: number)=>{Alert.alert(`state is : ${val}`)}}></CustomSwitch>
+
                 <View>
                     <TextInput
                         style={styles.input}
@@ -99,6 +60,7 @@ export default function(){
                         Forgot Password?
                     </Text>
                 </View>
+                
                 <View style={{
                     flexDirection: "column",
                     alignItems: 'center',
@@ -106,7 +68,7 @@ export default function(){
                 }}>
                     <TouchableOpacity
                         activeOpacity={1}
-                        onPress={() => changeSwitchPosition(1)}
+                        onPress={() => {}}
                         style={{
                             backgroundColor: '#796edb',
                             borderRadius: 50,
@@ -114,30 +76,14 @@ export default function(){
                             alignItems: 'center',
                             height: 50, width: 300
                         }}>
-                        <Text
-                            style={{
-                            color: 'white',
+                            <Text
+                                style={{
+                                color: 'white',
                             }}>
-                            Sign In
-                        </Text>
+                                Sign In
+                            </Text>
                     </TouchableOpacity>
-                    <View style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                    }}>
-                        <TouchableOpacity
-                            activeOpacity={1}
-                            onPress={() => changeSwitchPosition(1)}
-                            style={{
-                                borderRadius: 50,
-                                borderWidth: .5,
-                                borderColor: 'grey',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}>
-                            
-                        </TouchableOpacity>
-                    </View>
+                    
                     <Text style={{textAlign: "center", 
                         color: 'grey',
                         padding: 15}}>
