@@ -23,7 +23,7 @@ function InputFields(props: any){
             style={styles.input}
             //onChangeText={onChangeNumber}
             //value={number}
-            placeholder="Vendor Id"
+            placeholder="Username"
         />
         <TextInput
             style={styles.input}
@@ -80,7 +80,7 @@ export default function(){
                 alignItems: "center", 
                 justifyContent: "space-around"}} >
 
-                <CustomSwitch leftButtonText="Login" rightButtonText="Sign-Up" onStateChange={(val: number)=>{setSwitchVal(val)}}></CustomSwitch>
+                <CustomSwitch leftButtonText="Login" rightButtonText="Register" onStateChange={(val: number)=>{setSwitchVal(val)}}></CustomSwitch>
                 <InputFields val={switchVal}/> 
                 <View style={{
                     flexDirection: "column",
@@ -101,7 +101,7 @@ export default function(){
                                 style={{
                                 color: 'white',
                             }}>
-                                {switchVal==1 ? 'Sign In' : 'Register'}     
+                                {switchVal==1 ? 'Login' : 'Register'}     
                             </Text>
                     </TouchableOpacity>
                     
