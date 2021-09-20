@@ -15,13 +15,53 @@ import {
   } from 'react-native';
 import globalStyle from '../styles/GlobalStyle';
 import CustomSwitch from '../components/CustomSwitch';
-export default function(){
-    
-    const [switchPosition, setSwitchPosition] = useState(1);
 
-    const changeSwitchPosition = (val: number) => {
-        setSwitchPosition(val);
-    }
+function InputFields(props: any){
+    if (props.val==1) 
+        return(<View>
+        <TextInput
+            style={styles.input}
+            //onChangeText={onChangeNumber}
+            //value={number}
+            placeholder="Vendor Id"
+        />
+        <TextInput
+            style={styles.input}
+            //onChangeText={onChangeNumber}
+            //value={number}
+            placeholder="Password"
+        />
+        <Text style={{textAlign: "center", 
+            color: 'grey'}}>
+            Forgot Password?
+        </Text>
+    </View>)
+    else
+        return(<View>
+            <TextInput
+                style={styles.input}
+                //onChangeText={onChangeNumber}
+                //value={number}
+                placeholder="Username"
+            />
+            <TextInput
+                style={styles.input}
+                //onChangeText={onChangeNumber}
+                //value={number}
+                placeholder="Password"
+            />
+            <TextInput
+                style={styles.input}
+                //onChangeText={onChangeNumber}
+                //value={number}
+                placeholder="Confirm Password"
+            />
+        </View>)
+}
+
+export default function(){
+
+    const[switchVal,setSwitchVal]=useState(1);
 
     return (
         <View style={{
@@ -40,27 +80,8 @@ export default function(){
                 alignItems: "center", 
                 justifyContent: "space-around"}} >
 
-                <CustomSwitch leftButtonText="Login" rightButtonText="Sign-Up" onStateChange={(val: number)=>{Alert.alert(`state is : ${val}`)}}></CustomSwitch>
-
-                <View>
-                    <TextInput
-                        style={styles.input}
-                        //onChangeText={onChangeNumber}
-                        //value={number}
-                        placeholder="Vendor Id"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        //onChangeText={onChangeNumber}
-                        //value={number}
-                        placeholder="Password"
-                    />
-                    <Text style={{textAlign: "center", 
-                        color: 'grey'}}>
-                        Forgot Password?
-                    </Text>
-                </View>
-                
+                <CustomSwitch leftButtonText="Login" rightButtonText="Sign-Up" onStateChange={(val: number)=>{setSwitchVal(val)}}></CustomSwitch>
+                <InputFields val={switchVal}/> 
                 <View style={{
                     flexDirection: "column",
                     alignItems: 'center',
@@ -80,7 +101,7 @@ export default function(){
                                 style={{
                                 color: 'white',
                             }}>
-                                Sign In
+                                {switchVal==1 ? 'Sign In' : 'Register'}     
                             </Text>
                     </TouchableOpacity>
                     
