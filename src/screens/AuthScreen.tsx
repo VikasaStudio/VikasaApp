@@ -1,5 +1,5 @@
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     SafeAreaView,
     ScrollView,
@@ -17,18 +17,29 @@ import globalStyle from '../styles/GlobalStyle';
 import CustomSwitch from '../components/CustomSwitch';
 
 function InputFields(props: any){
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    //ensures that onStateChange prop method is called only after state updates are applied.
+    useEffect( ()=>{
+        if(props.onStateChange)
+            props.onStateChange({username, password, confirmPassword});
+    }, [username, password, confirmPassword]); //// Only re-run the effect if following state changes
+
     if (props.val==1) 
         return(<View>
         <TextInput
             style={styles.input}
-            //onChangeText={onChangeNumber}
-            //value={number}
+            onChangeText={(text)=>{setUsername(text);}}
+            value={username}
             placeholder="Username"
         />
         <TextInput
             style={styles.input}
-            //onChangeText={onChangeNumber}
-            //value={number}
+            onChangeText={(text)=>{setPassword(text);}}
+            value={password}
             placeholder="Password"
         />
         <Text style={{textAlign: "center", 
@@ -40,23 +51,49 @@ function InputFields(props: any){
         return(<View>
             <TextInput
                 style={styles.input}
-                //onChangeText={onChangeNumber}
-                //value={number}
+                onChangeText={(text)=>{setUsername(text);}}
+                value={username}
                 placeholder="Username"
             />
             <TextInput
                 style={styles.input}
-                //onChangeText={onChangeNumber}
-                //value={number}
+                onChangeText={(text)=>{setPassword(text);}}
+                value={password}
                 placeholder="Password"
             />
             <TextInput
                 style={styles.input}
-                //onChangeText={onChangeNumber}
-                //value={number}
+                onChangeText={(text)=>{setConfirmPassword(text);}}
+                value={confirmPassword}
                 placeholder="Confirm Password"
             />
         </View>)
+}
+
+/**
+ * 
+ * @param username 
+ * @param password 
+ * @returns Promise
+ * @summary Attempts Login via local-strategy, if success then it stores cookies otherwise throws relevant error message.
+ */
+async function AttemptLocalLogin(username:string, password:string){
+    const res = await fetch('http://localhost:3000/api/auth/vendor/login', {
+        method: 'POST',
+        headers:{
+            Accept: 'application/json',
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+            "username": username,
+            "password": password,
+            "strategy": "local"
+        })
+    });
+
+    
+    const responseJSON = res.json();
+    console.log(responseJSON);
 }
 
 export default function(){
@@ -81,7 +118,11 @@ export default function(){
                 justifyContent: "space-around"}} >
 
                 <CustomSwitch leftButtonText="Login" rightButtonText="Register" onStateChange={(val: number)=>{setSwitchVal(val)}}></CustomSwitch>
-                <InputFields val={switchVal}/> 
+                
+                <InputFields val={switchVal} onStateChange={(newState : any)=>{
+                    console.log(newState);
+                }}/>
+
                 <View style={{
                     flexDirection: "column",
                     alignItems: 'center',
@@ -111,6 +152,7 @@ export default function(){
                         By continuing you agree to Vikasa's Terms of Services and Privacy Policy.
                     </Text>
                 </View>
+            
             </View>
         </View>
     );
