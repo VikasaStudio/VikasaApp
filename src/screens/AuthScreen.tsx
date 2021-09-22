@@ -57,15 +57,15 @@ function InputFields(props: any){
             />
             <TextInput
                 style={styles.input}
-                onChangeText={(text)=>{setPassword(text);}}
-                value={password}
-                placeholder="Password"
+                //onChangeText={(text)=>{setPassword(text);}}
+                //value={password}
+                placeholder="Mobile"
             />
             <TextInput
                 style={styles.input}
-                onChangeText={(text)=>{setConfirmPassword(text);}}
-                value={confirmPassword}
-                placeholder="Confirm Password"
+                //onChangeText={(text)=>{setConfirmPassword(text);}}
+                //value={confirmPassword}
+                placeholder="OTP"
             />
         </View>)
 }
@@ -91,11 +91,11 @@ async function AttemptLocalLogin(username:string, password:string){
             "strategy": "local"
         })
     });
-
+    console.log(res);
     console.log(res.headers.get('set-cookie'));
     console.log(res.status);
     
-    const responseJSON = res.json();
+    const responseJSON = await res.json();
     console.log(responseJSON);
     }
     catch(err){
