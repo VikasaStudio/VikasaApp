@@ -78,7 +78,8 @@ function InputFields(props: any){
  * @summary Attempts Login via local-strategy, if success then it stores cookies otherwise throws relevant error message.
  */
 async function AttemptLocalLogin(username:string, password:string){
-    const res = await fetch('http://localhost:3000/api/auth/vendor/login', {
+    try{
+    const res = await fetch('http://10.0.2.2:3000/api/auth/vendor/login', {
         method: 'POST',
         headers:{
             Accept: 'application/json',
@@ -91,9 +92,15 @@ async function AttemptLocalLogin(username:string, password:string){
         })
     });
 
+    console.log(res.headers.get('set-cookie'));
+    console.log(res.status);
     
     const responseJSON = res.json();
     console.log(responseJSON);
+    }
+    catch(err){
+        console.error(err);
+    }
 }
 
 export default function(){
@@ -130,7 +137,9 @@ export default function(){
                 }}>
                     <TouchableOpacity
                         activeOpacity={1}
-                        onPress={() => {}}
+                        onPress={() => {
+                            AttemptLocalLogin('keshav','keshav');
+                        }}
                         style={{
                             backgroundColor: '#796edb',
                             borderRadius: 50,
