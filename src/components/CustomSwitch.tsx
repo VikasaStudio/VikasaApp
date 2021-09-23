@@ -8,7 +8,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
  * @returns JSX
  */
 export default function(props: any){
-    const [switchPosition, setSwitchPosition] = useState(1);
+    const [switchPosition, setSwitchPosition] = useState(0);
 
     const changeSwitchPosition = (val: number) => {
         setSwitchPosition(val);
@@ -29,6 +29,23 @@ export default function(props: any){
             marginBottom: 20}}>
             <TouchableOpacity
                 activeOpacity={1}
+                onPress={() => changeSwitchPosition(0)}
+                style={{
+                    flex: 1,
+                    backgroundColor: switchPosition == 0 ? '#796edb' : '#2a264a',
+                    borderRadius: 40,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                <Text
+                    style={{
+                    color: switchPosition == 0 ? 'white' : 'grey',
+                    }}>
+                    {props.leftButtonText}
+                </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                activeOpacity={1}
                 onPress={() => changeSwitchPosition(1)}
                 style={{
                     flex: 1,
@@ -40,23 +57,6 @@ export default function(props: any){
                 <Text
                     style={{
                     color: switchPosition == 1 ? 'white' : 'grey',
-                    }}>
-                    {props.leftButtonText}
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                activeOpacity={1}
-                onPress={() => changeSwitchPosition(2)}
-                style={{
-                    flex: 1,
-                    backgroundColor: switchPosition == 2 ? '#796edb' : '#2a264a',
-                    borderRadius: 40,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
-                <Text
-                    style={{
-                    color: switchPosition == 2 ? 'white' : 'grey',
                     }}>
                     {props.rightButtonText}
                 </Text>
