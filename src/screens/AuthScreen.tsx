@@ -22,7 +22,7 @@ import ToggableViewContainer from '../components/ToggableViewContainer';
 
 
 /**
- * @property onStateChange({username:'', password:''})
+ * @property onStateChange({username:'', password:''}), onLoginClicked({username:'', password:''})
  * @returns JSX
  * @summary A Login View, bind handlers to onStateChange to listen for user inputs event.
  */
@@ -63,7 +63,10 @@ function LoginView(props : any){
             padding: 15
         }}>
             
-            <TouchableOpacity activeOpacity={1} onPress={() => {}} style={{
+            <TouchableOpacity activeOpacity={1} onPress={() => {
+                if(props.onLoginClicked)
+                    props.onLoginClicked({username, password});
+            }} style={{
                 backgroundColor: '#796edb',
                 borderRadius: 50,
                 justifyContent: 'center',
@@ -272,6 +275,9 @@ export default function AuthScreen(){
                     
                     <LoginView onStateChange={(newState: { username: string | undefined; password: string | undefined; })=>{
                         console.log('LoginView new-state :',newState);
+                    }} onLoginClicked={(credentials: any)=>{
+                        console.log('login pressed.');
+                        AttemptLocalLogin(credentials.username, credentials.password);
                     }}/>
 
                     <RegisterView onStateChange={(newState: { username: string | undefined; password: string | undefined; })=>{
