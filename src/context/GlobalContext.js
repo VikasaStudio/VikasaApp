@@ -5,24 +5,24 @@ import defaultTheme from '../assets/colors/colors';
 
 export const GlobalContext = createContext();
 
+/**
+ * 
+ * @param {*} props 
+ * @returns 
+ * @summary Provides state [theme, username, AccessToken, RefreshToken] and methods to change [theme, username]
+ */
 function GlobalContextProvider(props){
 
     var [theme, setTheme] = useState(defaultTheme);
-    var [vendor, setVendor] = useState(null);
-
-    function loginVendor(vendorData){
-        setVendor(vendorData);
-    }
-    function logoutVendor(){
-        setVendor(null);
-    }
-
-    function switchTheme(newTheme){
-        setTheme();
-    }
+    var [username, setUsername] = useState(null);
 
     return (
-        <GlobalContext.Provider value = {theme, switchTheme, vendor, loginVendor, logoutVendor}>
+        <GlobalContext.Provider value = {{
+            theme, 
+            username,
+            setTheme,
+            setUsername
+        }}>
             {props.children}
         </GlobalContext.Provider>
     )

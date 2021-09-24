@@ -1,5 +1,5 @@
 
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     SafeAreaView,
     ScrollView,
@@ -18,6 +18,7 @@ import globalStyle from '../styles/GlobalStyle';
 
 import CustomSwitch from '../components/CustomSwitch';
 import ToggableViewContainer from '../components/ToggableViewContainer';
+import { GlobalContext } from '../context/GlobalContext';
 
 
 
@@ -31,11 +32,13 @@ function LoginView(props : any){
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    
     useEffect(()=>{
         if(props.onStateChange)
             props.onStateChange({username, password});
     }, [username, password]);
-    
+
+
     return (
     <View>
         <View>
@@ -160,24 +163,29 @@ function RegisterView(props: any){
  */
 async function AttemptLocalLogin(username:string, password:string){
     try{
-        const res = await fetch('http://10.0.2.2:3000/api/auth/vendor/login', {
-            method: 'POST',
-            headers:{
-                Accept: 'application/json',
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({
-                "username": username,
-                "password": password,
-                "strategy": "local"
-            })
+        return new Promise(async (resolve, reject)=>{
+            console.log('Attempting Login');
+            const res = await fetch('http://10.0.2.2:3000/api/auth/vendor/login', {
+                method: 'POST',
+                headers:{
+                    Accept: 'application/json',
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                    "username": username,
+                    "password": password,
+                    "strategy": "local"
+                })
+            });
+            console.log(res);
+            console.log(res.headers.get('set-cookie'));
+            console.log(res.status);
+            if(res.status == 200)
+                resolve(username);
+            const responseJSON = await res.json();
+            reject(responseJSON);
         });
-        console.log(res);
-        console.log(res.headers.get('set-cookie'));
-        console.log(res.status);
         
-        const responseJSON = await res.json();
-        console.log(responseJSON);
     }
     catch(err){
         console.error(err);
@@ -251,6 +259,7 @@ async function verifyOTP(key : string, otp : string){
 export default function AuthScreen(){
 
     const[switchVal,setSwitchVal]=useState(0);
+    const globalContextValue = useContext(GlobalContext);
 
     return (
         <View style={{
@@ -275,9 +284,15 @@ export default function AuthScreen(){
                     
                     <LoginView onStateChange={(newState: { username: string | undefined; password: string | undefined; })=>{
                         console.log('LoginView new-state :',newState);
-                    }} onLoginClicked={(credentials: any)=>{
+                    }} onLoginClicked={async (credentials: any)=>{
                         console.log('login pressed.');
-                        AttemptLocalLogin(credentials.username, credentials.password);
+                        let res = await AttemptLocalLogin(credentials.username, credentials.password).catch(err=>{
+                            console.log(err);
+                        });
+                        if(res === credentials.username)
+                            globalContextValue.setUsername(res);
+                        else
+                            globalContextValue.setUsername(null); 
                     }}/>
 
                     <RegisterView onStateChange={(newState: { username: string | undefined; password: string | undefined; })=>{

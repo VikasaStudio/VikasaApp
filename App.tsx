@@ -24,8 +24,10 @@ import {
 } from '@react-navigation/native';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import GlobalContextProvider from './src/context/GlobalContext';
 import AuthScreen from './src/screens/AuthScreen';
+
+import GlobalContextProvider from './src/context/GlobalContext';
+import { GlobalContext } from './src/context/GlobalContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,11 +35,28 @@ function App() {
   return (
     <GlobalContextProvider>
 
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={AuthScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      
+      <GlobalContext.Consumer>
+        { val => {
+          if(val.username){
+            return (
+              <View>
+                <Text> Welcome Mr. {val.username} </Text>
+              </View>
+            );
+          }
+          
+          return (
+            <NavigationContainer>
+              <Stack.Navigator initialRouteName="Home">
+                <Stack.Screen name="Home" component={AuthScreen} />
+              </Stack.Navigator>
+            </NavigationContainer>
+          );
+        }}
+      </GlobalContext.Consumer>
+
+      
 
     </GlobalContextProvider>
   );
