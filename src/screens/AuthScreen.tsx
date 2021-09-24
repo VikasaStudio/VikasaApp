@@ -41,7 +41,10 @@ function LoginView(props : any){
 
     return (
     <View>
-        <View>
+        <View style={{
+            paddingBottom: 60,
+            paddingTop: 24
+        }}>
             <TextInput
                 style={styles.input}
                 onChangeText={(text)=>{setUsername(text);}}
@@ -107,7 +110,9 @@ function RegisterView(props: any){
 
     return (
     <View>
-        <View>
+        <View style={{
+            paddingBottom: 40
+        }}>
             <TextInput
                 style={styles.input}
                 onChangeText={(text)=>{setUsername(text);}}

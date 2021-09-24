@@ -26,7 +26,8 @@ export default function(props: any){
             borderColor: "#2a264a",
             height: 35, width: 250, 
             backgroundColor: "#2a264a",
-            marginBottom: 20}}>
+            marginBottom: 20
+        }}>
             <TouchableOpacity
                 activeOpacity={1}
                 onPress={() => changeSwitchPosition(0)}
