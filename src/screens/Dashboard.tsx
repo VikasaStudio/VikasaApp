@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
     SafeAreaView,
     ScrollView,
@@ -12,8 +12,10 @@ import {
     Button,
     Alert
   } from 'react-native';
+import { GlobalContext } from '../context/GlobalContext';
 
 export default function() {
+    const globalContextValue = useContext(GlobalContext);
     return(
     <View style={{
         flex: 1,
@@ -23,8 +25,12 @@ export default function() {
         <View style={{
             flex: 1,
             flexDirection: 'row',
-            
+            alignItems:'center',
+            justifyContent:'center'
         }}>
+            <Text style={{color:'white', fontSize:25}}>
+                Welcome {globalContextValue.username}
+            </Text>
         </View>
         <View style={{
             flex: 9,

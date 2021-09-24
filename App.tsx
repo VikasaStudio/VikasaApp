@@ -41,17 +41,18 @@ function App() {
         { val => {
           if(val.username){
             return (
-              <View>
-                <Text> Welcome Mr. {val.username} </Text>
-              </View>
+              <NavigationContainer>
+                <Stack.Navigator initialRouteName="Dashboard">
+                  <Stack.Screen name="Dashboard" component={Dashboard} />
+                </Stack.Navigator>
+            </NavigationContainer>
             );
           }
           
           return (
             <NavigationContainer>
-              <Stack.Navigator initialRouteName="Dashboard">
+              <Stack.Navigator initialRouteName="Home">
                 <Stack.Screen name="Home" component={AuthScreen} />
-                <Stack.Screen name="Dashboard" component={Dashboard} />
               </Stack.Navigator>
             </NavigationContainer>
           );
