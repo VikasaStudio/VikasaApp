@@ -28,6 +28,7 @@ import AuthScreen from './src/screens/AuthScreen';
 
 import GlobalContextProvider from './src/context/GlobalContext';
 import { GlobalContext } from './src/context/GlobalContext';
+import Dashboard from './src/screens/Dashboard';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,8 +49,9 @@ function App() {
           
           return (
             <NavigationContainer>
-              <Stack.Navigator initialRouteName="Home">
+              <Stack.Navigator initialRouteName="Dashboard">
                 <Stack.Screen name="Home" component={AuthScreen} />
+                <Stack.Screen name="Dashboard" component={Dashboard} />
               </Stack.Navigator>
             </NavigationContainer>
           );
