@@ -6,7 +6,7 @@ import {
     View  } from 'react-native';
 
 import styles from '../../styles/GlobalStyle';
-import { sendMobileOTP, verifyOTP } from '../../utils/helpers';
+import { registerVendor, sendMobileOTP, verifyOTP } from '../../utils/helpers';
 
 
 import ToggableViewContainer from '../ToggableViewContainer';
@@ -19,6 +19,9 @@ import ToggableViewContainer from '../ToggableViewContainer';
 export default function RegisterView(props: any){
     
     const [username, setUsername] = useState('');
+    const [bussinessName, setBusinessName] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [mobile, setMobile] = useState('');
     const [otp, setOTP] = useState('');
 
@@ -160,14 +163,23 @@ export default function RegisterView(props: any){
                         value={username}
                         placeholder="Username"
                     />
-
                     <TextInput
                         style={styles.InputStyle}
+                        onChangeText={(text)=>{setBusinessName(text);}}
+                        value={bussinessName}
+                        placeholder="Bussiness Name"
+                    />
+                    <TextInput
+                        style={styles.InputStyle}
+                        onChangeText={(text)=>{setPassword(text);}}
+                        value={password}
                         placeholder="Password"
                     />
 
                     <TextInput
                         style={styles.InputStyle}
+                        onChangeText={(text)=>{setConfirmPassword(text);}}
+                        value={confirmPassword}
                         placeholder="Confirm Password"
                     />
 
@@ -175,6 +187,12 @@ export default function RegisterView(props: any){
                 <TouchableOpacity activeOpacity={1} onPress={async () => {
                     try{
                         if(mobile.trim().length < 7) return;
+                        if(password !== confirmPassword){
+                            console.log('password mismatch.');
+                            return;
+                        }
+                        const status  = await registerVendor({username, password, bussinessName, mobile});
+                        console.log(status);
                     }catch(err){
                         console.log('error while sending otp:', err);
                     }

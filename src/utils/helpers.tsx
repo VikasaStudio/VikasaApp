@@ -102,3 +102,31 @@ export async function verifyOTP(key : string, otp : string){
     });
     
 }
+
+
+export async function registerVendor(data:any){
+    return new Promise(async (resolve, reject)=>{
+        try{
+            const res = await fetch('http://10.0.2.2:3000/api/auth/vendor/register', {
+                method: 'POST',
+                headers:{
+                    Accept: 'application/json',
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                    "username":data.username,
+                    "password":data.password,
+                    "displayName":data.bussinessName,
+                    "mobile":data.mobile
+                })
+            });
+            if(res.status == 201 || res.status == 200)
+                return resolve('Vendor Registered Successfully.');
+            return reject('Unable to Register, Try again with new username.');
+        }       
+        catch(err){
+            console.log(err);
+            reject(err);
+        }
+    });
+}
