@@ -8,10 +8,14 @@ const styles = StyleSheet.create({
       alignContent:'center',
       alignItems: 'center'
   },
-  Input: {
-      padding: 10,
-      height:40,
-      borderWidth:1
+  InputStyle: {
+    height: 40,
+    width: 300,
+    margin: 12,
+    backgroundColor: 'white',
+    borderWidth: .5,
+    borderRadius: 5,
+    padding: 10,
   }
 });
 
