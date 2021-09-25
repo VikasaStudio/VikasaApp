@@ -191,6 +191,9 @@ export default function RegisterView(props: any){
                             console.log('password mismatch.');
                             return;
                         }
+                        if(props.onRegisterClicked){
+                            props.onRegisterClicked({username, password, bussinessName, mobile});
+                        }
                         const status  = await registerVendor({username, password, bussinessName, mobile});
                         console.log(status);
                     }catch(err){

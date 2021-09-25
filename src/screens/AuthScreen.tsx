@@ -6,7 +6,7 @@ import ToggableViewContainer from '../components/ToggableViewContainer';
 import { GlobalContext } from '../context/GlobalContext';
 import LoginView from '../components/Login/LoginView';
 import RegisterView from '../components/Register/RegisterView';
-import { AttemptLocalLogin } from '../utils/helpers';
+import { AttemptLocalLogin, registerVendor } from '../utils/helpers';
 
 
 
@@ -55,6 +55,13 @@ export default function AuthScreen(){
 
                     <RegisterView onStateChange={(newState: { username: string | undefined; password: string | undefined; })=>{
                         console.log('LoginView new-state :',newState);
+                    }} onRegisterClicked={async (credentials : any)=>{
+                        var res  = await registerVendor(credentials).catch(err=>{
+                            console.log(err);
+                        });
+                        if(res){
+                            globalContextValue.setUsername(credentials.username);
+                        }
                     }}/>
 
                 </ToggableViewContainer>
