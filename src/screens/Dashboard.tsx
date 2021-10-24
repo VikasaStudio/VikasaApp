@@ -12,109 +12,75 @@ import {
     Button,
     Alert
   } from 'react-native';
+import Card from '../components/Card';
 import { GlobalContext } from '../context/GlobalContext';
 
 export default function() {
     const globalContextValue = useContext(GlobalContext);
     return(
     <View style={{
-        flex: 1,
+        flexGrow: 1,
         flexDirection: 'column',
         backgroundColor: "#1A1A22"
     }}>
+        
+        {/*--- TOP BAR --- */}
         <View style={{
-            flex: 1,
-            flexDirection: 'row',
+            flex:1,
             alignItems:'center',
-            justifyContent:'center'
+            justifyContent:'center',
+            padding:10
         }}>
             <Text style={{color:'white', fontSize:25}}>
                 Welcome {globalContextValue.username}
             </Text>
         </View>
+
+        {/*--- UI Container --- */}
         <View style={{
-            flex: 9,
+            flexGrow: 15,
             flexDirection: 'column',
             backgroundColor: '#796edb',
             borderTopLeftRadius: 40, 
             borderTopRightRadius: 40,
         }}>
+
+            {/*---Top 3 Cards--- */}
             <View style={{
-                flex: 2,
+                flex: 0.25,
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingLeft: 25,
-                paddingRight: 25
+                justifyContent: 'space-around'
             }}>
-                <View style={{
-                    borderRadius: 20,
-                    width: 100,
-                    height: 85,
-                    backgroundColor: 'white',
-                    opacity: 0.1
-                }}>
-                </View>
-                <View style={{
-                    borderRadius: 20,
-                    width: 100,
-                    height: 85,
-                    backgroundColor: 'white',
-                    opacity: 0.1
-                }}></View>
-                <View style={{
-                    borderRadius: 20,
-                    width: 100,
-                    height: 85,
-                    backgroundColor: 'white',
-                    opacity: 0.1
-                }}></View>
+                <Card size="85"/>
+                <Card size="85"/>
+                <Card size="85"/>
             </View>
+            
+            {/*--- Services Cards--- */}
             <View style={{
-                flex: 7,
-                flexDirection: 'row',
-                backgroundColor: "#1A1A22",
-                borderTopLeftRadius: 40, 
-                borderTopRightRadius: 40,  
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                paddingTop: 10,
-                paddingLeft: 25,
-                paddingRight: 25
-            }}>
-                <View style={{
-                    borderRadius: 20,
-                    width: 162,
-                    height: 162,
-                    backgroundColor: 'white',
-                    opacity: 0.05,
-                    marginTop: 18
-                }}></View>
-                <View style={{
-                    borderRadius: 20,
-                    width: 162,
-                    height: 162,
-                    backgroundColor: 'white',
-                    opacity: 0.05,
-                    marginTop: 18
-                }}></View>
-                <View style={{
-                    borderRadius: 20,
-                    width: 162,
-                    height: 162,
-                    backgroundColor: 'white',
-                    opacity: 0.05,
-                    marginTop: 18
-                }}></View>
-                <View style={{
-                    borderRadius: 20,
-                    width: 162,
-                    height: 162,
-                    backgroundColor: 'white',
-                    opacity: 0.05,
-                    marginTop: 18
-                }}></View>
+                    flex:1,
+                    borderTopLeftRadius: 20, 
+                    borderTopRightRadius: 20,
+                    flexDirection: 'column',
+                    backgroundColor: "#1A1A22",
+                    paddingTop:15
+                }}>
+                    <ScrollView scrollEnabled={true}  contentContainerStyle={{
+                        flexGrow:1,
+                        flexDirection: 'row',
+                        alignItems: 'flex-start',
+                        justifyContent: 'space-around',
+                        flexWrap: 'wrap'
+                    }}>
+                        <Card title="Orders" />
+                        <Card title="Inventory"/>
+                        <Card title="Stock"/>
+                        <Card title="Stock"/>
+                        <Card title="Stock"/>
+                        <Card title="Stock"/>
+                        <Card title="Stock"/>
+                    </ScrollView>
             </View>
         </View>
     </View>);
