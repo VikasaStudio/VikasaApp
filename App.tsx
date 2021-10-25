@@ -43,7 +43,9 @@ function App() {
             return (
               <NavigationContainer>
                 <Stack.Navigator initialRouteName="Dashboard">
-                  <Stack.Screen name="Dashboard" component={Dashboard} />
+                  <Stack.Screen name="Dashboard" component={Dashboard} options={{
+                    headerShown:false
+                  }}/>
                 </Stack.Navigator>
             </NavigationContainer>
             );
@@ -52,7 +54,9 @@ function App() {
           return (
             <NavigationContainer>
               <Stack.Navigator initialRouteName="Home">
-                <Stack.Screen name="Home" component={AuthScreen} />
+                <Stack.Screen name="Home" component={AuthScreen} options={{
+                    headerShown:false
+                  }}/>
               </Stack.Navigator>
             </NavigationContainer>
           );

@@ -9,7 +9,7 @@ import { Text, TouchableOpacity, View } from "react-native"
 export default function(props: any){
     
     return (
-        <TouchableOpacity onPress={()=>{console.log('card pressed with title : '+props.title);}}>
+        <TouchableOpacity onPress={()=>{}}>
             <View style={{
                 borderRadius: parseInt(props.borderRadius)  || 20,
                 width: parseInt(props.size) || parseInt(props.width) || 162,

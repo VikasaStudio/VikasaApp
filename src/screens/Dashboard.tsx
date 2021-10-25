@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/core';
 import React, {useContext, useState} from 'react';
 import {
     SafeAreaView,
@@ -17,6 +18,7 @@ import { GlobalContext } from '../context/GlobalContext';
 
 export default function() {
     const globalContextValue = useContext(GlobalContext);
+    const navigation = useNavigation();
 
     return(
     <View style={{
@@ -28,11 +30,16 @@ export default function() {
         {/*--- TOP BAR --- */}
         <View style={{
             flex:1,
+            flexDirection:'row',
             alignItems:'center',
-            justifyContent:'center',
+            justifyContent:'space-around',
             padding:10
         }}>
-            <Text style={{color:'white', fontSize:25}}>
+            <TouchableOpacity style={{flex:1}} onPress={()=>{console.log('open menu')}}>
+                <View style={{backgroundColor:'blue', width:45, height:45, borderRadius:50}}></View>
+            </TouchableOpacity>
+
+            <Text style={{color:'white', fontSize:25, flex:2}}>
                 Welcome {globalContextValue.username}
             </Text>
         </View>
@@ -53,9 +60,11 @@ export default function() {
                 alignItems: 'center',
                 justifyContent: 'space-around'
             }}>
+                
                 <Card size="85" backgroundColor="white"/>
                 <Card size="85" backgroundColor="white"/>
                 <Card size="85" backgroundColor="white"/>
+
             </View>
             
             {/*--- Services Cards--- */}
@@ -77,8 +86,8 @@ export default function() {
                     }}>
                         <Card title="Orders" backgroundColor="pink" titleColor="black"/>
                         <Card title="Inventory"  backgroundColor="pink" titleColor="black"/>
-                        <Card title="My Employees"  backgroundColor="pink" titleColor="black"/>
-                        <Card title="test"  backgroundColor="pink" titleColor="black"/>
+                        <Card title="Staff"  backgroundColor="pink" titleColor="black"/>
+                        <Card title="Coupons"  backgroundColor="pink" titleColor="black"/>
                     </ScrollView>
             </View>
         </View>
