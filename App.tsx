@@ -10,6 +10,7 @@
 
 import React from 'react';
 import {
+  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -29,6 +30,8 @@ import AuthScreen from './src/screens/AuthScreen';
 import GlobalContextProvider from './src/context/GlobalContext';
 import { GlobalContext } from './src/context/GlobalContext';
 import Dashboard from './src/screens/Dashboard';
+import Orders from './src/screens/Orders/Orders';
+import {HeaderRight} from './src/screens/Orders/Orders';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,12 +42,16 @@ function App() {
       
       <GlobalContext.Consumer>
         { val => {
-          if(val.username){
+          if(!val.username){
             return (
               <NavigationContainer>
-                <Stack.Navigator initialRouteName="Dashboard">
+                <Stack.Navigator initialRouteName="Order">
                   <Stack.Screen name="Dashboard" component={Dashboard} options={{
                     headerShown:false
+                  }}/>
+                  <Stack.Screen name="Order" component={Orders} options={{
+                    headerShown:true,
+                    headerRight: HeaderRight
                   }}/>
                 </Stack.Navigator>
             </NavigationContainer>
