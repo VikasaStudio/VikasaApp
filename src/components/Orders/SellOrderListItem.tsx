@@ -14,11 +14,12 @@ export default function(props: any){
             flex:1,
             flexDirection: 'row'
         }}>
+        
             {/* Root Container */}
             <View style={{
                 minHeight:80,
                 backgroundColor: '#373737',
-                marginBottom:3,
+                marginBottom:5,
                 flex:1,
                 flexDirection: 'row'
             }}>
@@ -81,6 +82,7 @@ export default function(props: any){
                     </View>
                 </View>
             </View>
+        
         </TouchableOpacity>
     )
 }

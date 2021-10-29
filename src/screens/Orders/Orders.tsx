@@ -56,13 +56,5 @@ export default function() {
         <FlatList data={DATA} renderItem = {(orderData)=>{
           return <SellOrderListItem titleColor='white' fontSize='18' sellOrderDetail={orderData}/>
         }} keyExtractor={item=> item.id}/>
-
-        <View>
-          <TouchableOpacity>
-            <View style={{width:100, height:50, backgroundColor:'red', borderRadius:50, justifyContent:'center', alignItems: 'center'}}>
-              <Text>Back</Text></View>
-            </TouchableOpacity>
-        </View>
-
     </View>);
 }

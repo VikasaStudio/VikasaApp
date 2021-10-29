@@ -40,6 +40,7 @@ const Tab = createMaterialTopTabNavigator();
 
 function OrderNavigator(props: any){
   return (
+    
     <Tab.Navigator>
       <Tab.Screen name="Pending" component={Orders} options={{
         title: "Pending",
@@ -71,42 +72,45 @@ function OrderNavigator(props: any){
         tabBarStyle:{height:40, backgroundColor:'grey'},
         swipeEnabled:false
       }}/>
-    </Tab.Navigator>);
+    </Tab.Navigator>
+
+  );
 }
-function App() {
+export default function App() {
   return (
-    <GlobalContextProvider>
-      <GlobalContext.Consumer>
-        { val => {
-          if(!val.username){
+      <GlobalContextProvider>
+        <GlobalContext.Consumer>
+          { 
+            val => {
+            if(!val.username)
+              return (
+                <NavigationContainer>
+                  <Stack.Navigator initialRouteName="Order">
+                    <Stack.Screen name="Dashboard" component={Dashboard} options={{
+                      headerShown:false
+                    }}/>
+                    <Stack.Screen name='Order' options={{headerTitle:'My Orders'}} component={OrderNavigator} />
+                  </Stack.Navigator>
+              </NavigationContainer>
+              );
+            
+            
             return (
               <NavigationContainer>
-                <Stack.Navigator initialRouteName="Order">
-                  <Stack.Screen name="Dashboard" component={Dashboard} options={{
-                    headerShown:false
-                  }}/>
-                  <Stack.Screen name='Order' component={OrderNavigator} />
+                <Stack.Navigator initialRouteName="Home">
+                  <Stack.Screen name="Home" component={AuthScreen} options={{
+                      headerShown:false
+                    }}/>
                 </Stack.Navigator>
-            </NavigationContainer>
+              </NavigationContainer>
             );
-          }
-          
-          return (
-            <NavigationContainer>
-              <Stack.Navigator initialRouteName="Home">
-                <Stack.Screen name="Home" component={AuthScreen} options={{
-                    headerShown:false
-                  }}/>
-              </Stack.Navigator>
-            </NavigationContainer>
-          );
-        }}
-      </GlobalContext.Consumer>
+          }}
+        </GlobalContext.Consumer>
 
-      
 
-    </GlobalContextProvider>
+
+      </GlobalContextProvider>
   );
 }
 
-export default App;
+
