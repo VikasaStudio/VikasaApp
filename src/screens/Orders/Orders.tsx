@@ -32,7 +32,7 @@ export {HeaderRight}
 export default function() {
     var DATA: readonly any[] | null | undefined = [
       ];
-    for(let i=11; i<50; i++){
+    for(let i=1; i<4; i++){
       DATA = [...DATA, {
         id: i,
         customerName: 'Keshav '+i,
@@ -50,9 +50,19 @@ export default function() {
         flexDirection: 'column',
         backgroundColor: "white"
     }}>
+        <View style={{height:80, justifyContent:'center', alignItems: 'center'}}>
+          <Text>Swipe Left to Reject, Swipe Right to Accept Order</Text>
+        </View>
         <FlatList data={DATA} renderItem = {(orderData)=>{
           return <SellOrderListItem titleColor='white' fontSize='18' sellOrderDetail={orderData}/>
         }} keyExtractor={item=> item.id}/>
+
+        <View>
+          <TouchableOpacity>
+            <View style={{width:100, height:50, backgroundColor:'red', borderRadius:50, justifyContent:'center', alignItems: 'center'}}>
+              <Text>Back</Text></View>
+            </TouchableOpacity>
+        </View>
 
     </View>);
 }

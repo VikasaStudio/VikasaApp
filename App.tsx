@@ -25,6 +25,8 @@ import {
 } from '@react-navigation/native';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
 import AuthScreen from './src/screens/AuthScreen';
 
 import GlobalContextProvider from './src/context/GlobalContext';
@@ -34,12 +36,46 @@ import Orders from './src/screens/Orders/Orders';
 import {HeaderRight} from './src/screens/Orders/Orders';
 
 const Stack = createNativeStackNavigator();
+const Tab = createMaterialTopTabNavigator();
 
+function OrderNavigator(props: any){
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Pending" component={Orders} options={{
+        title: "Pending",
+        tabBarLabelStyle:{fontSize:10, color:'white'},
+        tabBarStyle:{height:40, backgroundColor:'grey'},
+        swipeEnabled:false
+      }}/>
+      <Tab.Screen name="Accepted" component={Orders} options={{
+        title: "Accepted",
+        tabBarLabelStyle:{fontSize:10, color:'white'},
+        tabBarStyle:{height:40, backgroundColor:'grey'},
+        swipeEnabled:false
+      }}/>
+      <Tab.Screen name="Shipped" component={Orders} options={{
+        title: "Shipped",
+        tabBarLabelStyle:{fontSize:10, color:'white'},
+        tabBarStyle:{height:40, backgroundColor:'grey'},
+        swipeEnabled:false
+      }}/>
+      <Tab.Screen name="Delivered" component={Orders} options={{
+        title: "Delivered",
+        tabBarLabelStyle:{fontSize:10, color:'white'},
+        tabBarStyle:{height:40, backgroundColor:'grey'},
+        swipeEnabled:false
+      }}/>
+      <Tab.Screen name="Rejected" component={Orders} options={{
+        title: "Rejected",
+        tabBarLabelStyle:{fontSize:10, color:'white'},
+        tabBarStyle:{height:40, backgroundColor:'grey'},
+        swipeEnabled:false
+      }}/>
+    </Tab.Navigator>);
+}
 function App() {
   return (
     <GlobalContextProvider>
-
-      
       <GlobalContext.Consumer>
         { val => {
           if(!val.username){
@@ -49,10 +85,7 @@ function App() {
                   <Stack.Screen name="Dashboard" component={Dashboard} options={{
                     headerShown:false
                   }}/>
-                  <Stack.Screen name="Order" component={Orders} options={{
-                    headerShown:true,
-                    headerRight: HeaderRight
-                  }}/>
+                  <Stack.Screen name='Order' component={OrderNavigator} />
                 </Stack.Navigator>
             </NavigationContainer>
             );
