@@ -1,4 +1,5 @@
 import React, {useContext, useState} from 'react';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import {
     SafeAreaView,
     ScrollView,
@@ -35,6 +36,7 @@ export default function() {
     for(let i=1; i<4; i++){
       DATA = [...DATA, {
         id: i,
+        key: i,
         customerName: 'Keshav '+i,
         state:'Delhi',
         country:'India',
@@ -53,8 +55,20 @@ export default function() {
         <View style={{height:80, justifyContent:'center', alignItems: 'center'}}>
           <Text>Swipe Left to Reject, Swipe Right to Accept Order</Text>
         </View>
-        <FlatList data={DATA} renderItem = {(orderData)=>{
-          return <SellOrderListItem titleColor='white' fontSize='18' sellOrderDetail={orderData}/>
-        }} keyExtractor={item=> item.id}/>
+        
+        <SwipeListView data={DATA} useFlatList = {true} renderItem = {
+          (orderData)=>{
+            return (
+              <TouchableOpacity onPress={()=>{console.log('SwipeRow Item Pressed.')}} style={{
+                flex:1,
+                flexDirection: 'row'
+              }}>
+                <SellOrderListItem titleColor='white' fontSize='18' sellOrderDetail={orderData}/>
+              </TouchableOpacity>)
+          }} 
+          keyExtractor={item=> item.id} 
+          leftOpenValue={75} 
+          rightOpenValue={-75}
+        />
     </View>);
 }
