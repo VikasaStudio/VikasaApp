@@ -56,7 +56,10 @@ export default function() {
           <Text>Swipe Left to Reject, Swipe Right to Accept Order</Text>
         </View>
         
-        <SwipeListView data={DATA} useFlatList = {true} renderItem = {
+        <SwipeListView 
+          data={DATA}
+          useFlatList = {true} 
+          renderItem = {
           (orderData)=>{
             return (
               <TouchableOpacity onPress={()=>{console.log('SwipeRow Item Pressed.')}} style={{
@@ -66,9 +69,16 @@ export default function() {
                 <SellOrderListItem titleColor='white' fontSize='18' sellOrderDetail={orderData}/>
               </TouchableOpacity>)
           }} 
-          keyExtractor={item=> item.id} 
-          leftOpenValue={75} 
-          rightOpenValue={-75}
+          renderHiddenItem={ ({item}) => {
+            console.log(item);
+            return (
+            <View style={{backgroundColor:'red', flex:1, marginBottom:5}}>
+                
+            </View>
+          )}}
+          keyExtractor={item=> item.id}
+          leftOpenValue={205} 
+          rightOpenValue={-175}
         />
     </View>);
 }
