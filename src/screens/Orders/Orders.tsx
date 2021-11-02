@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import { SwipeListView } from 'react-native-swipe-list-view';
+import { SwipeListView, SwipeRow} from 'react-native-swipe-list-view';
 import {
     SafeAreaView,
     ScrollView,
@@ -31,6 +31,9 @@ var HeaderRight = function(){
 export {HeaderRight}
 
 export default function() {
+
+    var [swipeData, setSwipeData] = useState({dir:'left',key:''});
+
     var DATA: readonly any[] | null | undefined = [
       ];
     for(let i=1; i<4; i++){
@@ -58,6 +61,12 @@ export default function() {
         
         <SwipeListView 
           data={DATA}
+          onSwipeValueChange = {(e)=>{
+            // {direction [left/right], 
+            // isOpen [true/false],  Last known state (its state just before click, true=> red/green visible, false=> not in toggle state)
+            // value: [floating point horizontal value]}
+            console.log(e);
+          }}
           useFlatList = {true} 
           renderItem = {
           (orderData)=>{
@@ -70,12 +79,11 @@ export default function() {
               </TouchableOpacity>)
           }} 
           renderHiddenItem={ ({item}) => {
-            console.log(item);
-            return (
-            <View style={{backgroundColor:'red', flex:1, marginBottom:5}}>
-                
-            </View>
-          )}}
+            if(item.key == 2){
+              return (<View style={{backgroundColor:'black', flex:1, marginBottom:5}}/>)
+            }
+            return (<View style={{backgroundColor:'red', flex:1, marginBottom:5}}/>)
+          }}
           keyExtractor={item=> item.id}
           leftOpenValue={205} 
           rightOpenValue={-175}
