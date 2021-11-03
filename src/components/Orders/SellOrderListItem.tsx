@@ -6,7 +6,7 @@ import { Text, TouchableOpacity, View } from "react-native"
  * @returns 
  */
 export default function(props: any){
-    const OrderData = props['sellOrderDetail']['item'];
+    const OrderData = props.data;
     return (
         <View style={{
             minHeight:80,
