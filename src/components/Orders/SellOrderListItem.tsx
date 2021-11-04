@@ -11,7 +11,6 @@ export default function(props: any){
         <View style={{
             minHeight:80,
             backgroundColor: '#373737',
-            marginBottom:5,
             flex:1,
             flexDirection: 'row'
         }}>
@@ -44,7 +43,7 @@ export default function(props: any){
                     </View>
                     <View style={{backgroundColor: 'blue'}}>
                         <Text style={{color: props.titleColor || 'white', fontSize: 13}}>
-                            {OrderData.itemQuantity}
+                            {'50'}
                         </Text>
                     </View>
                     <View style={{backgroundColor: 'green'}}>

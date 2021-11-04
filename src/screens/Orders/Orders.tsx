@@ -11,6 +11,7 @@ import {
     TouchableOpacity,
     View,
     Button,
+    Modal,
     Alert,
     FlatList
   } from 'react-native';
@@ -19,16 +20,20 @@ import { GlobalContext } from '../../context/GlobalContext';
 import SellOrderListItem from '../../components/Orders/SellOrderListItem';
 var DATA: readonly any[] | null | undefined = [
 ];
+
 for(let i=1; i<5; i++){
-  DATA = [...DATA, {
+  //console.log(`for loop ${i}, time : ${new Date().getTime()}`);
+  DATA = [...DATA,{
     id: i,
     key: i,
     customerName: 'Keshav '+i,
     state:'Delhi',
+    address:'AB XYZ',
     country:'India',
-    mobile:'999921108'+i,
+    email:'sharmakeshav15157@gmail.com',
+    mobile:'00912830'+i,
     total:'5'+i,
-    itemQuantity:(i+5)
+    items:[{name:'item1', price:50, quantity:50, total:2500}]
   }]
 }
 /* React Native Navigation Custom Headers */
@@ -43,19 +48,19 @@ var HeaderRight = function(){
 
 export {HeaderRight}
 
-const HiddenItem = function(props: any)
-{
-  if(props.swipeDirection ==='left'){
-    return (<View style={{backgroundColor:'red', flex:1, marginBottom:5}}/>)
-  }
-  return (<View style={{backgroundColor:'lime', flex:1, marginBottom:5}}/>)
-}
-
 const SwipeRowWrapper = function(props:any){
   const [swipeDirection, setSwipeDirection] = useState('left');
-  var orderData = props.data;
+
+  let hidden = <View/>;
+  if(swipeDirection === 'left')
+    hidden = <View style={{backgroundColor:'red', flex:1}}/>;
+  else 
+    hidden=<View style={{backgroundColor:'lime', flex:1}}/>
+
   function OnSwipe({value}:any){
-    if(value <= 0)
+    if(value == 0)
+      setSwipeDirection('none');
+    else if(value < 0)
       setSwipeDirection('left');
     else setSwipeDirection('right');
   }
@@ -63,17 +68,18 @@ const SwipeRowWrapper = function(props:any){
     <SwipeRow onSwipeValueChange={OnSwipe}>
 
       {/* Hidden Item */}
-      <HiddenItem swipeDirection={swipeDirection}/>
-
+      {hidden}
+      
       {/* Front Item */}
-      <TouchableOpacity onPress={()=>{console.log('SwipeRow Item Pressed.')}} style={{
-        flex:1,
-        flexDirection: 'row'
-      }}>
-        <SellOrderListItem titleColor='white' fontSize='18' data={orderData}/>
+      <TouchableOpacity style={{flex:1,flexDirection: 'row'}}>
+        <SellOrderListItem titleColor='white' fontSize='18' data={props.data}/>
       </TouchableOpacity>
 
     </SwipeRow>)
+}
+
+function renderItem({item} : any){
+  return <View><SwipeRowWrapper data={item}/></View>;
 }
 export default function() {
       
@@ -91,10 +97,10 @@ export default function() {
       
       <SwipeListView 
         data={DATA}
-        useFlatList = {true} 
-        renderItem = {({item, index})=><View><SwipeRowWrapper data={item}/></View>}
-        leftOpenValue={205} 
-        rightOpenValue={-175}
+        useFlatList = {true}
+        renderItem = {renderItem}
+        leftOpenValue={75} 
+        rightOpenValue={-75}
       />
   </View>);
 }
