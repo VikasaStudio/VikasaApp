@@ -1,62 +1,51 @@
-import React, {useContext, useState} from 'react';
-import { SwipeListView, SwipeRow} from 'react-native-swipe-list-view';
+import React from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
     Text,
-    TextInput,
-    useColorScheme,
-    TouchableOpacity,
     View,
-    Button,
-    Alert,
-    FlatList
   } from 'react-native';
-import Card from '../Card';
-import { GlobalContext } from '../../context/GlobalContext';
-import SellOrderListItem from './SellOrderListItem';
 import DataTableBase from '../DataTableBase';
 
 function CustomerRow(props: any){
     let data = props.data;
-    let iconType = props.iconType;
-    return (<View style={{flex:1, flexDirection: 'column'}}>
-
+    return (
+    <View style={{flex:1, flexDirection: 'column'}}>
+        <Text>{data}</Text>
     </View>)
 }
 
 const ColumnHeader = [
     {
         name: 'Item',
+        selector: (rowItem: { name:any }) => rowItem.name
     },
     {
         name: 'Unit Price',
+        selector: (rowItem: { price:any}) => rowItem.price
     },
     {
         name: 'Quantity',
+        selector: (rowItem: { quantity:any}) => rowItem.quantity
     },
     {
-        name: 'Total'
+        name: 'Total',
+        selector: (rowItem: { total:any }) => rowItem.total
     }
 ]
+
 export default function SellOrderModal(props : any){
-    let orderData = props.data;
-    return (
-    <View style={{flex:1, flexDirection:'row'}}>
+    return (<View style={{flex:1, flexDirection:'row'}}>
         
         {/* Customer Profile View */}
         <View style={{flex:1, flexDirection:'column'}}>
-            <CustomerRow data = {orderData.customerName}/>
-            <CustomerRow data = {orderData.email}/>
-            <CustomerRow data = {orderData.address}/>
-            <CustomerRow data = {orderData.customerName}/>
+            <CustomerRow data = {props.data.customerName}/>
+            <CustomerRow data = {props.data.email}/>
+            <CustomerRow data = {props.data.address}/>
+            <CustomerRow data = {props.data.customerName}/>
         </View>
 
         {/* Ordered Items Table */}
         <View>
-            <DataTableBase columns={ColumnHeader} data={orderData.items}/>
+            <DataTableBase columns={ColumnHeader} data={props.data.items}/>
         </View>
 
     </View>);

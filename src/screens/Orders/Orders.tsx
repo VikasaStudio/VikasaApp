@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {Fragment, useContext, useState} from 'react';
 import { SwipeListView, SwipeRow} from 'react-native-swipe-list-view';
 import {
     SafeAreaView,
@@ -18,10 +18,12 @@ import {
 import Card from '../../components/Card';
 import { GlobalContext } from '../../context/GlobalContext';
 import SellOrderListItem from '../../components/Orders/SellOrderListItem';
+import SellOrderModal from '../../components/Orders/OrderModal';
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 var DATA: readonly any[] | null | undefined = [
 ];
 
-for(let i=1; i<5; i++){
+for(let i=1; i<10; i++){
   //console.log(`for loop ${i}, time : ${new Date().getTime()}`);
   DATA = [...DATA,{
     id: i,
@@ -33,7 +35,20 @@ for(let i=1; i<5; i++){
     email:'sharmakeshav15157@gmail.com',
     mobile:'00912830'+i,
     total:'5'+i,
-    items:[{name:'item1', price:50, quantity:50, total:2500}]
+    items:[
+      {
+        name:'item1', 
+        price:50,  //per unit price
+        quantity:50, 
+        total:2500 //total price
+      },
+      {
+        name:'item1', 
+        price:10, 
+        quantity:150, 
+        total:1500
+      }
+    ]
   }]
 }
 /* React Native Navigation Custom Headers */
@@ -50,12 +65,11 @@ export {HeaderRight}
 
 const SwipeRowWrapper = function(props:any){
   const [swipeDirection, setSwipeDirection] = useState('left');
+  const [modalVisible, setModalVisibility] = useState(false);
 
-  let hidden = <View/>;
-  if(swipeDirection === 'left')
-    hidden = <View style={{backgroundColor:'red', flex:1}}/>;
-  else 
-    hidden=<View style={{backgroundColor:'lime', flex:1}}/>
+  let hidden = <View style={{backgroundColor:'black'}}/>;
+  if(swipeDirection === 'left') hidden = <View style={{backgroundColor:'red', flex:1}}/>;
+  else hidden=<View style={{backgroundColor:'lime', flex:1}}/>
 
   function OnSwipe({value}:any){
     if(value == 0)
@@ -66,15 +80,20 @@ const SwipeRowWrapper = function(props:any){
   }
   return (
     <SwipeRow onSwipeValueChange={OnSwipe}>
-
       {/* Hidden Item */}
       {hidden}
-      
-      {/* Front Item */}
-      <TouchableOpacity style={{flex:1,flexDirection: 'row'}}>
-        <SellOrderListItem titleColor='white' fontSize='18' data={props.data}/>
-      </TouchableOpacity>
 
+      {/* Front Item */}
+      <Fragment>
+        <Modal visible={modalVisible}>
+          <View>
+            <Button  onPress={()=>{setModalVisibility(false)}}  title="Close"  color="black" accessibilityLabel="Learn more about this purple button"/>
+          </View>
+        </Modal>
+        <TouchableOpacity style={{flex:1,flexDirection: 'row'}} onPress={(e)=>{setModalVisibility(true)}}>
+          <SellOrderListItem titleColor='white' fontSize='18' data={props.data}/>
+        </TouchableOpacity>
+      </Fragment>
     </SwipeRow>)
 }
 
@@ -82,9 +101,6 @@ function renderItem({item} : any){
   return <View><SwipeRowWrapper data={item}/></View>;
 }
 export default function() {
-      
-  
-  const globalContextValue = useContext(GlobalContext);
   return(
   <View style={{
       flex: 1,
@@ -94,9 +110,9 @@ export default function() {
       <View style={{height:80, justifyContent:'center', alignItems: 'center'}}>
         <Text>Swipe Left to Reject, Swipe Right to Accept Order</Text>
       </View>
-      
       <SwipeListView 
         data={DATA}
+        onScroll={(e)=>{console.log('Scroll : ' + new Date().getTime())}}
         useFlatList = {true}
         renderItem = {renderItem}
         leftOpenValue={75} 
