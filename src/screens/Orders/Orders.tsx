@@ -66,6 +66,7 @@ export {HeaderRight}
 const SwipeRowWrapper = function(props:any){
   const [swipeDirection, setSwipeDirection] = useState('left');
   const [modalVisible, setModalVisibility] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState({});
 
   let hidden = <View style={{backgroundColor:'black'}}/>;
   if(swipeDirection === 'left') hidden = <View style={{backgroundColor:'red', flex:1}}/>;
@@ -85,12 +86,15 @@ const SwipeRowWrapper = function(props:any){
 
       {/* Front Item */}
       <Fragment>
-        <Modal visible={modalVisible}>
-          <View>
-            <Button  onPress={()=>{setModalVisibility(false)}}  title="Close"  color="black" accessibilityLabel="Learn more about this purple button"/>
+        <Modal visible={modalVisible} presentationStyle="pageSheet" animationType="slide">
+          <View style={{backgroundColor:'red', flex:1}}>
+
+            <SellOrderModal data={selectedOrder} style={{flex:1}}/>
+            <Button  onPress={()=>{setModalVisibility(false)}}  title="Close"  color="black"/>
+            
           </View>
         </Modal>
-        <TouchableOpacity style={{flex:1,flexDirection: 'row'}} onPress={(e)=>{setModalVisibility(true)}}>
+        <TouchableOpacity style={{flex:1,flexDirection: 'row'}} onPress={(e)=>{setModalVisibility(true); setSelectedOrder(props.data)}}>
           <SellOrderListItem titleColor='white' fontSize='18' data={props.data}/>
         </TouchableOpacity>
       </Fragment>

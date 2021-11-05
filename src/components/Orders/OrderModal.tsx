@@ -3,20 +3,19 @@ import {
     Text,
     View,
   } from 'react-native';
-import DataTableBase from '../DataTableBase';
 
 function CustomerRow(props: any){
-    let data = props.data;
+    console.log(props)
     return (
-    <View style={{flex:1, flexDirection: 'column'}}>
-        <Text>{data}</Text>
+    <View style={{flex:1}}>
+        <Text style={{backgroundColor:'red'}}>{props.data}</Text>
     </View>)
 }
 
 const ColumnHeader = [
     {
         name: 'Item',
-        selector: (rowItem: { name:any }) => rowItem.name
+        selector: (rowItem: { name: any; }) => rowItem.name
     },
     {
         name: 'Unit Price',
@@ -33,10 +32,14 @@ const ColumnHeader = [
 ]
 
 export default function SellOrderModal(props : any){
-    return (<View style={{flex:1, flexDirection:'row'}}>
-        
+    console.log('SellOrderModal',props.data.items);
+    if(props == null || props === {}){
+        return <View/>
+    }
+    return (
+    <View style={{flex:1}}> 
         {/* Customer Profile View */}
-        <View style={{flex:1, flexDirection:'column'}}>
+        <View style={{flex:1}}>
             <CustomerRow data = {props.data.customerName}/>
             <CustomerRow data = {props.data.email}/>
             <CustomerRow data = {props.data.address}/>
@@ -44,9 +47,7 @@ export default function SellOrderModal(props : any){
         </View>
 
         {/* Ordered Items Table */}
-        <View>
-            <DataTableBase columns={ColumnHeader} data={props.data.items}/>
+        <View style={{flex:5}}>
         </View>
-
     </View>);
 }
