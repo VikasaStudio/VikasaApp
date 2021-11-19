@@ -18,7 +18,7 @@ import { GlobalContext } from '../context/GlobalContext';
 
 export default function() {
     const globalContextValue = useContext(GlobalContext);
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
 
     return(
     <View style={{
@@ -84,7 +84,9 @@ export default function() {
                         justifyContent: 'space-around',
                         flexWrap: 'wrap'
                     }}>
-                        <Card title="Orders" backgroundColor="pink" titleColor="black"/>
+                        <Card title="Orders" backgroundColor="pink" titleColor="black" onPress={(e: any)=>{
+                            navigation.navigate({name:'Order'})
+                        }}/>
                         <Card title="Inventory"  backgroundColor="pink" titleColor="black"/>
                         <Card title="Staff"  backgroundColor="pink" titleColor="black"/>
                         <Card title="Coupons"  backgroundColor="pink" titleColor="black"/>

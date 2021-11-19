@@ -9,7 +9,7 @@ import { Text, TouchableOpacity, View } from "react-native"
 export default function(props: any){
     
     return (
-        <TouchableOpacity onPress={()=>{}}>
+        <TouchableOpacity onPress={props.onPress}>
             <View style={{
                 borderRadius: parseInt(props.borderRadius)  || 20,
                 width: parseInt(props.size) || parseInt(props.width) || 162,

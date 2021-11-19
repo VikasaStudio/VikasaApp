@@ -86,7 +86,7 @@ export default function App() {
             if(!val.username)
               return (
                 <NavigationContainer>
-                  <Stack.Navigator initialRouteName="Order">
+                  <Stack.Navigator initialRouteName="Dashboard">
                     <Stack.Screen name="Dashboard" component={gestureHandlerRootHOC(Dashboard)} options={{
                       headerShown:false
                     }}/>
