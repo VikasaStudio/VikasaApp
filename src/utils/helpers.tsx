@@ -1,3 +1,5 @@
+import CONFIG from './config';
+
 /**
  * 
  * @param username 
@@ -44,7 +46,7 @@
  export async function sendMobileOTP(mobileNumber : string){
     return new Promise(async (resolve, reject)=>{
         try{
-            const res = await fetch('http://10.0.2.2:3000/api/auth/otp', {
+            const res = await fetch(`${CONFIG.VikasaAPI}/auth/otp`, {
                 method: 'POST',
                 headers:{
                     Accept: 'application/json',
@@ -78,7 +80,7 @@
 export async function verifyOTP(key : string, otp : string){
     return new Promise(async (resolve, reject)=>{
         try{
-            const res = await fetch('http://10.0.2.2:3000/api/auth/verify/otp', {
+            const res = await fetch(`${CONFIG.VikasaAPI}/auth/verify/otp`, {
                 method: 'POST',
                 headers:{
                     Accept: 'application/json',
@@ -107,7 +109,7 @@ export async function verifyOTP(key : string, otp : string){
 export async function registerVendor(data:any){
     return new Promise(async (resolve, reject)=>{
         try{
-            const res = await fetch('http://10.0.2.2:3000/api/auth/vendor/register', {
+            const res = await fetch(`${CONFIG.VikasaAPI}/auth/vendor/register`, {
                 method: 'POST',
                 headers:{
                     Accept: 'application/json',
@@ -129,4 +131,40 @@ export async function registerVendor(data:any){
             reject(err);
         }
     });
+}
+
+//------------ Inventory & Items CRUD
+export async function fetchInventory(vendorId:string, shopId:string, offset: number, limit: number){
+    const res = await fetch(`${CONFIG.VikasaAPI}/shop/${shopId}/inventory?vendorId=${vendorId}`, {
+        method:'GET',
+        headers:{
+            Accept:'application/json',
+            'Content-Type':'application/json'
+        }
+    });
+    console.log('Inventory Data Fetch: ',res);
+    if(res.status == 201 || res.status == 200)
+        return res;
+    return [];
+}
+export async function addShopItems(){
+
+}
+export async function createInventory() {
+    
+}
+
+//-------------- Orders CRUD
+export async function fetchOrders(offset: number, limit:number){
+    const res = await fetch(`${CONFIG.VikasaAPI}/shop/order`, {
+        method:'GET',
+        headers:{
+            Accept:'application/json',
+            'Content-Type':'application/json'
+        }
+    });
+    console.log('Order Data Fetch : ', res);
+    if(res.status == 201 || res.status == 200)
+        return res;
+    return [];
 }
