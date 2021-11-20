@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, {useContext, useState} from 'react';
 import {
     Text,
@@ -21,13 +22,12 @@ const Item = ({ title } : any) => (
 );
 export default function() {
     var DATA: readonly any[] | null | undefined = [];
-    console.log('test');
     for(let i=0; i<515; i++){
         DATA = [...DATA, {
             id: i, title:i+' InventoryName'
         }]
     }
-    const globalContextValue = useContext(GlobalContext);
+    const navigation = useNavigation<any>();
     const renderItem = ({ item } :any) => (
         <Item title={item.title} />
     );
@@ -50,7 +50,9 @@ export default function() {
 
             {/* Button Bottom View */}
             <View style={{padding:10, paddingLeft:120, paddingRight:120}}>
-                <Button title="New Inventory" onPress={()=>{console.log('Create Inventory Pressed')}}></Button>
+                <Button title="New Inventory" onPress={()=>{
+                    navigation.navigate({name:'CreateInventory'});
+                }}></Button>
             </View>
         </View>
     );

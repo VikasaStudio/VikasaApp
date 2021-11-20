@@ -36,6 +36,7 @@ import Orders from './src/screens/Orders/Orders';
 import {HeaderRight} from './src/screens/Orders/Orders';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import Inventory from './src/screens/Inventory/Inventory';
+import CreateInventory from './src/screens/Inventory/CreateInventory';
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 
@@ -78,6 +79,19 @@ function OrderNavigator(props: any){
 
   );
 }
+
+function InventoryNavigator(props : any){
+  return (
+    <Stack.Navigator initialRouteName="Inventory">
+      <Stack.Screen name="Inventory" component={gestureHandlerRootHOC(Inventory)} options={{
+        headerTitle:'My Inventory'
+      }}/>
+      <Stack.Screen name="CreateInventory" component={gestureHandlerRootHOC(CreateInventory)} options={{
+        headerTitle:'Create/Add Inventory'
+      }}/>
+    </Stack.Navigator>
+  )
+}
 export default function App() {
   return (
       <GlobalContextProvider>
@@ -94,9 +108,9 @@ export default function App() {
                     <Stack.Screen name='Order'component={gestureHandlerRootHOC(OrderNavigator)} options={{
                       headerTitle:'My Orders'
                     }} />
-                    <Stack.Screen name='Inventory'component={gestureHandlerRootHOC(Inventory)} options={{
-                      headerTitle:'My Inventories'
-                    }} />
+                    <Stack.Screen name='InventoryNavigator'component={gestureHandlerRootHOC(InventoryNavigator)} options={{
+                      headerShown:false
+                    }}/>
                   </Stack.Navigator>
               </NavigationContainer>
               );

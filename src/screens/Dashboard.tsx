@@ -88,7 +88,7 @@ export default function() {
                             navigation.navigate({name:'Order'})
                         }}/>
                         <Card title="Inventory"  backgroundColor="pink" titleColor="black" onPress={(e: any)=>{
-                            navigation.navigate({name:'Inventory'})
+                            navigation.navigate({name:'InventoryNavigator'})
                         }}/>
                         <Card title="Staff"  backgroundColor="pink" titleColor="black"/>
                         <Card title="Coupons"  backgroundColor="pink" titleColor="black"/>
