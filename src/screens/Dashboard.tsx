@@ -87,7 +87,9 @@ export default function() {
                         <Card title="Orders" backgroundColor="pink" titleColor="black" onPress={(e: any)=>{
                             navigation.navigate({name:'Order'})
                         }}/>
-                        <Card title="Inventory"  backgroundColor="pink" titleColor="black"/>
+                        <Card title="Inventory"  backgroundColor="pink" titleColor="black" onPress={(e: any)=>{
+                            navigation.navigate({name:'Inventory'})
+                        }}/>
                         <Card title="Staff"  backgroundColor="pink" titleColor="black"/>
                         <Card title="Coupons"  backgroundColor="pink" titleColor="black"/>
                     </ScrollView>
