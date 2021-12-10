@@ -27,7 +27,7 @@ export default function() {
         backgroundColor: "#1A1A22"
     }}>
         
-        {/*--- TOP BAR --- */}
+        {/*--- HEADER --- */}
         <View style={{
             flex:1,
             flexDirection:'row',
@@ -35,7 +35,12 @@ export default function() {
             justifyContent:'space-around',
             padding:10
         }}>
-            <TouchableOpacity style={{flex:1}} onPress={()=>{console.log('open menu')}}>
+            {/* Profile/Menu Button */}
+            <TouchableOpacity style={{flex:1}} onPress={()=>{
+                navigation.navigate({
+                    name: 'Menu'
+                })
+            }}>
                 <View style={{backgroundColor:'blue', width:45, height:45, borderRadius:50}}></View>
             </TouchableOpacity>
 

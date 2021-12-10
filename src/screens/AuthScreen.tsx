@@ -1,12 +1,12 @@
 
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { View } from 'react-native';
 import CustomSwitch from '../components/CustomSwitch';
 import ToggableViewContainer from '../components/ToggableViewContainer';
 import { GlobalContext } from '../context/GlobalContext';
 import LoginView from '../components/Login/LoginView';
 import RegisterView from '../components/Register/RegisterView';
-import { AttemptLocalLogin, registerVendor } from '../utils/helpers';
+import { AttemptLocalLogin, registerVendor, checkIfSessionActive } from '../utils/helpers';
 
 
 
@@ -14,11 +14,33 @@ import { AttemptLocalLogin, registerVendor } from '../utils/helpers';
  * 
  * @returns AuthScreen with LoginView & RegisterView
  */
-export default function AuthScreen(){
+
+var onLoginRequest = async (credentials: any, globalContextValue: any) => {
+    console.log('----Login Requested-------');
+    let res = await AttemptLocalLogin(credentials.username, credentials.password).catch(err=>{
+        console.log(err);
+    });
+    if(res === credentials.username) {
+        globalContextValue.setUsername(res);
+    }
+    else {
+        globalContextValue.setUsername(null);
+    } 
+}
+
+export default function AuthScreen() {
 
     const[switchVal,setSwitchVal]=useState(0);
     const globalContextValue = useContext(GlobalContext);
+    
+    //executed once
+    useEffect(function() {
+        checkIfSessionActive().then((val)=>{
 
+        }).catch(err=>{
+
+        });
+    }, [])
     return (
         <View style={{
             flex : 1,
@@ -42,16 +64,7 @@ export default function AuthScreen(){
                     
                     <LoginView onStateChange={(newState: { username: string | undefined; password: string | undefined; })=>{
                         console.log('LoginView new-state :',newState);
-                    }} onLoginClicked={async (credentials: any)=>{
-                        console.log('login pressed.');
-                        let res = await AttemptLocalLogin(credentials.username, credentials.password).catch(err=>{
-                            console.log(err);
-                        });
-                        if(res === credentials.username)
-                            globalContextValue.setUsername(res);
-                        else
-                            globalContextValue.setUsername(null); 
-                    }}/>
+                    }} onLoginClicked={(credentials: any)=>onLoginRequest(credentials, globalContextValue)}/>
 
                     <RegisterView onStateChange={(newState: { username: string | undefined; password: string | undefined; })=>{
                         console.log('LoginView new-state :',newState);

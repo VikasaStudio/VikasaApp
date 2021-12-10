@@ -1,5 +1,5 @@
 import CONFIG from './config';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 /**
  * 
  * @param username 
@@ -7,12 +7,12 @@ import CONFIG from './config';
  * @returns Promise
  * @summary Attempts Login via local-strategy, if success then it stores cookies otherwise throws relevant error message.
  */
- export async function AttemptLocalLogin(username:string, password:string){
+export async function AttemptLocalLogin(username:string, password:string){
     try{
-        return new Promise(async (resolve, reject)=>{
-            console.log('Attempting Login');
+        return new Promise(async (resolve, reject) => {
             const res = await fetch('http://10.0.2.2:3000/api/auth/vendor/login', {
                 method: 'POST',
+                credentials: 'include',
                 headers:{
                     Accept: 'application/json',
                     'Content-Type':'application/json'
@@ -24,11 +24,23 @@ import CONFIG from './config';
                 })
             });
             console.log(res);
-            console.log(res.headers.get('set-cookie'));
+            console.log('headers', res.headers);
+            let cookie = res.headers.get('set-cookie');
+            console.log('cookie :',cookie);
             console.log(res.status);
-            if(res.status == 200)
+
+            if(res.status == 200) {
+
+                //persist the cookies.
+                await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.AccessToken,"value");
+                await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.RefreshToken,"value");
+                await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.Username,"value");
+                console.log(' [AttemptLocalLogin] : SharedPreferences set');
+
                 resolve(username);
+            }
             const responseJSON = await res.json();
+            console.log(responseJSON);
             reject(responseJSON);
         });
         
@@ -36,6 +48,23 @@ import CONFIG from './config';
     catch(err){
         console.error(err);
     }
+}
+
+/**
+ * @summary Checks if any previous session is already active.
+ */
+export async function checkIfSessionActive(){
+    const res = await fetch(`${CONFIG.VikasaAPI}/auth/vendor/login`, {
+        headers:{
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        }
+    });
+}
+
+
+export function logout(globalContextValue : any){
+    globalContextValue.setUsername(null);
 }
 
 /**
@@ -122,8 +151,10 @@ export async function registerVendor(data:any){
                     "mobile":data.mobile
                 })
             });
-            if(res.status == 201 || res.status == 200)
+            if(res.status == 201 || res.status == 200) {
+
                 return resolve('Vendor Registered Successfully.');
+            }
             return reject('Unable to Register, Try again with new username.');
         }       
         catch(err){

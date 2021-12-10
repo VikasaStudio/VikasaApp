@@ -37,6 +37,7 @@ import {HeaderRight} from './src/screens/Orders/Orders';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import Inventory from './src/screens/Inventory/Inventory';
 import CreateInventory from './src/screens/Inventory/CreateInventory';
+import Menu from './src/screens/Menu';
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 
@@ -98,11 +99,14 @@ export default function App() {
         <GlobalContext.Consumer>
           { 
             val => {
-            if(!val.username)
+            if(val.username)
               return (
                 <NavigationContainer>
                   <Stack.Navigator initialRouteName="Dashboard">
                     <Stack.Screen name="Dashboard" component={gestureHandlerRootHOC(Dashboard)} options={{
+                      headerShown:false
+                    }}/>
+                    <Stack.Screen name="Menu" component={gestureHandlerRootHOC(Menu)} options={{
                       headerShown:false
                     }}/>
                     <Stack.Screen name='Order'component={gestureHandlerRootHOC(OrderNavigator)} options={{
@@ -112,7 +116,7 @@ export default function App() {
                       headerShown:false
                     }}/>
                   </Stack.Navigator>
-              </NavigationContainer>
+                </NavigationContainer>
               );
             
             
