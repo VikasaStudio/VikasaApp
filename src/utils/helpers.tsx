@@ -67,6 +67,35 @@ export function logout(globalContextValue : any){
     globalContextValue.setUsername(null);
 }
 
+export async function createItem(data : any) {
+    const res = await fetch(`${CONFIG.VikasaAPI}/shop/inventory/item`, {
+        method: 'POST',
+        headers:{
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            itemType: data.itemType || 'sellable',
+            inventoryId: data.inventoryId,
+            storeId: data.storeId,
+            category: data.category,
+            variant: data.variant,
+            displayName: data.displayName,
+            description: data.description,
+            quantity: data.quantity,
+            MRP: data.MRP || data.pricePerUnit,
+            pricePerUnit: data.pricePerUnit,
+            currency: data.currency || 'INR'
+        })
+    });
+
+    if(res.status != 200){
+        console.log(res);
+        throw new Error("Item could not be created.");
+    }
+    return res;
+}
+
 /**
  * 
  * @param mobileNumber 
