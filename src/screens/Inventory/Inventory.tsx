@@ -51,7 +51,7 @@ export default function() {
 
             {/* Button Bottom View */}
             <View style={{padding:10, paddingLeft:120, paddingRight:120}}>
-                <Button title="New Inventory" onPress={()=>{
+                <Button title="New Item" onPress={()=>{
                     navigation.navigate({name: CONFIG.Screens.AddItem.name});
                 }}></Button>
             </View>

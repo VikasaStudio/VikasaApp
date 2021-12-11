@@ -6,7 +6,14 @@ import {
     View,
   } from 'react-native';
 
-/* */
+/* 
+  Display form where user will enter details of item they need to create.
+
+  This form also allows user to 
+  1. Create Shop* 
+  2. Create Inventory or Choose Existing One (Dropdown)
+  3. Basic Item Details
+*/
 export default function AddItemModal(props : any){
     return (
         <Modal  style={{
