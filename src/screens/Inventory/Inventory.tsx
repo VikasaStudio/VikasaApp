@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, {useContext, useState} from 'react';
+import CONFIG from '../../utils/config'
 import {
     Text,
     TextInput,
@@ -51,7 +52,7 @@ export default function() {
             {/* Button Bottom View */}
             <View style={{padding:10, paddingLeft:120, paddingRight:120}}>
                 <Button title="New Inventory" onPress={()=>{
-                    navigation.navigate({name:'CreateInventory'});
+                    navigation.navigate({name: CONFIG.Screens.AddItem.name});
                 }}></Button>
             </View>
         </View>

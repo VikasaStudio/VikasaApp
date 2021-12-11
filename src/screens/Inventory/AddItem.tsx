@@ -4,14 +4,13 @@ import {
     useColorScheme,
     TouchableOpacity,
     View,
-    FlatList,
-    Button,
-    Modal
+    Button
   } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { GlobalContext } from '../../context/GlobalContext';
 import React, {useContext, useState} from 'react';
 import AddItemModal from '../../components/Inventory/AddItemModal';
+
 export default function(props : any){
     const [addItemModalVisibility, setAddItemModalVisibility] = useState(false);
     return (

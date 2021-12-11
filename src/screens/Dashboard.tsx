@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/core';
 import React, {useContext, useState} from 'react';
+import CONFIG from '../utils/config'
 import {
     SafeAreaView,
     ScrollView,
@@ -38,7 +39,7 @@ export default function() {
             {/* Profile/Menu Button */}
             <TouchableOpacity style={{flex:1}} onPress={()=>{
                 navigation.navigate({
-                    name: 'Menu'
+                    name: CONFIG.Screens.ProfileMenu.name
                 })
             }}>
                 <View style={{backgroundColor:'blue', width:45, height:45, borderRadius:50}}></View>
@@ -90,13 +91,16 @@ export default function() {
                         flexWrap: 'wrap'
                     }}>
                         <Card title="Orders" backgroundColor="pink" titleColor="black" onPress={(e: any)=>{
-                            navigation.navigate({name:'Order'})
+                            navigation.navigate({name: CONFIG.Screens.OrderDashboard.name})
                         }}/>
+
                         <Card title="Inventory"  backgroundColor="pink" titleColor="black" onPress={(e: any)=>{
                             navigation.navigate({name:'InventoryNavigator'})
                         }}/>
+                        
                         <Card title="Staff"  backgroundColor="pink" titleColor="black"/>
                         <Card title="Coupons"  backgroundColor="pink" titleColor="black"/>
+
                     </ScrollView>
             </View>
         </View>

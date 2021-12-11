@@ -6,6 +6,7 @@ import {
     View,
   } from 'react-native';
 
+/* */
 export default function AddItemModal(props : any){
     return (
         <Modal  style={{

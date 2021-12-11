@@ -1,19 +1,11 @@
 import React, {Fragment, useContext, useState} from 'react';
 import { SwipeListView, SwipeRow} from 'react-native-swipe-list-view';
 import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
     Text,
-    TextInput,
-    useColorScheme,
     TouchableOpacity,
     View,
     Button,
-    Modal,
-    Alert,
-    FlatList
+    Modal
   } from 'react-native';
 import Card from '../../components/Card';
 import { GlobalContext } from '../../context/GlobalContext';

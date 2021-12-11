@@ -4,5 +4,17 @@ export default {
         'AccessToken': 'access_token',
         'RefreshToken': 'refresh_token',
         'Username': 'username'
+    },
+
+    'Screens':{
+        'Auth' : {name:'AuthScreen', component:''},
+
+        'Dashboard' : {name:'Dashboard', component:''},
+        'ProfileMenu' : {name:'Menu', component:''},
+        
+        'OrderDashboard' : {name:'Orders', component:''},
+
+        'Inventory' : {name:'Inventory', component:''},
+        'AddItem' : {name:'AddItem', component:''}
     }
 }
