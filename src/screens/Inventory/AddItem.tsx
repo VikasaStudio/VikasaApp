@@ -23,10 +23,20 @@ const Styles = StyleSheet.create({
 
     ViewStyle:{
         padding:10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex:1,
+        flexDirection: 'column',
+        minHeight:1
+    },
+
+    ViewStyleBehind:{
+        padding:10,
         backgroundColor:'white',
         justifyContent: 'center',
         alignItems: 'center',
         flex:1,
+        zIndex:-5,
         flexDirection: 'column',
     }
 })
@@ -38,7 +48,17 @@ export default function(props : any){
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
         {label: 'Apple', value: 'apple'},
-        {label: 'Banana', value: 'banana'}
+        {label: 'Banana', value: 'banana'},
+        {label: 'a', value: 'a'},
+        {label: 'b', value: 'b'},
+        {label: 'c', value: 'c'},
+        {label: 'd', value: 'd'},
+        {label: 'e', value: 'e'},
+        {label: 'f', value: 'f'},
+        {label: 'f2', value: '2f'},
+        {label: '3f', value: '3f'},
+        {label: '4f', value: 'f4'},
+        {label: 'f5', value: '5f'},
     ]);
 
     return (
@@ -50,9 +70,6 @@ export default function(props : any){
             {/* Create Shop & Inventory Dropdown Panel */}
             <View style={Styles.ViewStyle}>
                 <Text style={{padding:10}}>  Select/Create Shop & Inventory </Text>
-                <TextInput style={Styles.textStyle}
-                    placeholder="Shop"
-                />
                 <DropDownPicker 
                     open={isDropdownOpen}
                     setOpen={setDropdownState}
@@ -60,16 +77,37 @@ export default function(props : any){
                     scrollViewProps={{
                         nestedScrollEnabled: true,
                     }}
+                    style={{
+                        backgroundColor: "crimson",
+                        zIndex:1000,
+                        marginBottom:10,
+                      }}
                     value={value}
                     setValue={setValue}
-                    theme="DARK"
+                    setItems={setItems}
+                    items={items}
+                />
+
+                <DropDownPicker 
+                    open={isDropdownOpen}
+                    setOpen={setDropdownState}
+                    listMode="SCROLLVIEW"
+                    scrollViewProps={{
+                        nestedScrollEnabled: true,
+                    }}
+                    style={{
+                        backgroundColor: "crimson",
+                        zIndex:999
+                      }}
+                    value={value}
+                    setValue={setValue}
                     setItems={setItems}
                     items={items}
                 />
             </View>
 
             {/* Product Information Inputs */}
-            <View style={Styles.ViewStyle}>
+            <View style={Styles.ViewStyleBehind}>
                 <Text style={{padding:10}}>  Product Information </Text>
                 <TextInput style={Styles.textStyle}
                     placeholder="Name"
