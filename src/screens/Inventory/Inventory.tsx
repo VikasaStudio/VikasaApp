@@ -13,24 +13,33 @@ import {
 import Card from '../../components/Card';
 import { GlobalContext } from '../../context/GlobalContext';
 import styles from '../../styles/GlobalStyle';
+import InventoryItem from '../../components/Inventory/InventoryItem';
 
-const Item = ({ title } : any) => (
-    <TouchableOpacity>
-        <View style={{margin:5, padding:10, backgroundColor:'green'}}>
-            <Text>{title}</Text>
-        </View>
-    </TouchableOpacity>
-);
 export default function() {
     var DATA: readonly any[] | null | undefined = [];
     for(let i=0; i<515; i++){
         DATA = [...DATA, {
-            id: i, title:i+' InventoryName'
+            id: i, 
+            title:`item ${i}`, 
+            inventoryName: 'inv', 
+            inventoryId: i,
+            shopName: 'myShop', 
+            shopId:i, 
+            price:100, 
+            quantity:i
         }]
     }
     const navigation = useNavigation<any>();
     const renderItem = ({ item } :any) => (
-        <Item title={item.title} />
+        <InventoryItem 
+            title={item.title}
+            quantity={item.quantity} 
+            price={item.price} 
+            shopId={item.shopId}
+            shopName={item.shopName}
+            inventoryId={item.inventoryId}
+            inventoryName={item.inventoryName}
+        />
     );
 
     return(
@@ -40,7 +49,7 @@ export default function() {
             backgroundColor: "#1A1A22"
         }}>
             {/* Filter/Search Container View */}
-            <View style={{height:80,justifyContent:'center', alignItems: 'center', backgroundColor:'white'}}>
+            <View style={{height:80,justifyContent:'center', alignItems: 'center', backgroundColor:'red'}}>
                 <Text>Inventory Search Options Here</Text>
             </View>
 

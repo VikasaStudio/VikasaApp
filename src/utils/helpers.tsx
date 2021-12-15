@@ -67,6 +67,56 @@ export function logout(globalContextValue : any){
     globalContextValue.setUsername(null);
 }
 
+/**
+ * 
+ * @param data 
+ * @summary Creates empty store with no inventory & data.
+ */
+export async function createEmptyStore(data : any){
+    const res = await fetch(`${CONFIG.VikasaAPI}/shop`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+            vendorId: data.vendorId,
+            localDomain: data.localDomain,
+            displayName: data.displayName,
+            description: data.description || '',
+            imagesUrl: data.imagesUrl || null
+        })
+    });
+    console.log(res);
+    if(res.status != 200)
+        throw new Error("Failed to create empty store")
+    return res;
+}
+
+/**
+ * 
+ * @param data 
+ * @summary Creates empty inventory within a store, with no items added.
+ */
+export async function createEmptyInventory(data : any){
+    const res = await fetch(`${CONFIG.VikasaAPI}/shop/inventory`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+            vendorId: data.vendorId,
+            storeId: data.storeId,
+            inventoryName: data.inventoryName
+        })
+    });
+    console.log(res);
+    if(res.status != 200){
+        throw new Error("Inventory could not be created");
+    }
+    return res;
+}
 export async function createItem(data : any) {
     const res = await fetch(`${CONFIG.VikasaAPI}/shop/inventory/item`, {
         method: 'POST',
@@ -88,9 +138,8 @@ export async function createItem(data : any) {
             currency: data.currency || 'INR'
         })
     });
-
+    console.log(res);
     if(res.status != 200){
-        console.log(res);
         throw new Error("Item could not be created.");
     }
     return res;

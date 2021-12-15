@@ -42,8 +42,6 @@ const Styles = StyleSheet.create({
 })
 
 export default function(props : any){
-    const [addItemModalVisibility, setAddItemModalVisibility] = useState(false);
-
     const [isDropdownOpen, setDropdownState] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([
@@ -69,7 +67,8 @@ export default function(props : any){
         }}>
             {/* Create Shop & Inventory Dropdown Panel */}
             <View style={Styles.ViewStyle}>
-                <Text style={{padding:10}}>  Select/Create Shop & Inventory </Text>
+                <Text style={{padding:10, color:'white'}}>Select/Create Shop & Inventory </Text>
+                
                 <DropDownPicker 
                     open={isDropdownOpen}
                     setOpen={setDropdownState}
