@@ -17,7 +17,7 @@ import InventoryItem from '../../components/Inventory/InventoryItem';
 
 export default function() {
     var DATA: readonly any[] | null | undefined = [];
-    for(let i=0; i<515; i++){
+    for(let i=0; i<100; i++){
         DATA = [...DATA, {
             id: i, 
             title:`item ${i}`, 
@@ -49,7 +49,7 @@ export default function() {
             backgroundColor: "#1A1A22"
         }}>
             {/* Filter/Search Container View */}
-            <View style={{height:80,justifyContent:'center', alignItems: 'center', backgroundColor:'red'}}>
+            <View style={{height:80,justifyContent:'center', alignItems: 'center', backgroundColor:'lime'}}>
                 <Text>Inventory Search Options Here</Text>
             </View>
 
