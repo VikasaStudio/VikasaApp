@@ -1,5 +1,6 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import CheckBox from 'react-native-check-box'
 
 const styles = StyleSheet.create({
     cell: {
@@ -10,14 +11,33 @@ const styles = StyleSheet.create({
         marginBottom:1,
         minHeight:50,
         justifyContent: 'space-around'
+    },
+    cell2x:{
+        flex:4,
+        alignItems: 'center',
+        backgroundColor:'white',
+        marginTop:1,
+        marginBottom:1,
+        minHeight:50,
+        justifyContent: 'space-around'
     }
 })
 export default function(props: any){
+    const [isChecked, setChecked] = useState(false);
+    useEffect(()=>{
+        if(isChecked && props.onItemSelect){
+            props.onItemSelect(props);
+        }
+        else if(!isChecked && props.onItemUnselect){
+            props.onItemUnselect(props);
+        }
+    }, [isChecked]);
+
     return (
         <TouchableOpacity onPress={props.onPress}>
             <View style={{flex:1, flexDirection:'row'}}>
                 {/*left cell*/}
-                <View style={styles.cell}>
+                <View style={styles.cell2x}>
 
                     {/* row-1 */}
                     <View style={{flex:1, flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
@@ -34,7 +54,14 @@ export default function(props: any){
 
                 {/*right cell*/}
                 <View style={styles.cell}>
-                    {<Text>{props.quantity}</Text>}
+                <CheckBox
+                    style={{flex: 1, padding: 10}}
+                    onClick={()=>{
+                        setChecked(!isChecked);
+                    }}
+                    isChecked={isChecked}
+                    leftText={"CheckBox"}
+                />
                 </View>
             </View>
         </TouchableOpacity>
