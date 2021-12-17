@@ -30,8 +30,10 @@ for(let i=0; i<5; i++){
 export default function() {
     
     const navigation = useNavigation<any>();
-    const [selectedItems, setSelectedItem] = useState({});
-
+    const [selectedItems, setSelectedItems] = useState(new Map<string | number, any>());
+    useEffect(()=>{
+        console.log(selectedItems)
+    }, [selectedItems])
     return(
         <View style={{
             flex: 1,
@@ -54,11 +56,16 @@ export default function() {
                     shopName={item.shopName}
                     inventoryId={item.inventoryId}
                     inventoryName={item.inventoryName}
-                    onItemSelect={(e:any)=>{
-                        console.log('Selected. ', e.title)
+
+                    onItemSelect={(e: { title: string | number; })=>{
+                        var currentMap = selectedItems;
+                        currentMap.set(e.title, e)
+                        setSelectedItems(new Map(currentMap))
                     }}
                     onItemUnselect={(e:any)=>{
-                        console.log('Unselected', e.title)
+                        var currentMap = selectedItems;
+                        currentMap.delete(e.title)
+                        setSelectedItems(new Map(currentMap))
                     }}
                 />
             )} keyExtractor={item => item.id} />
@@ -79,7 +86,9 @@ export default function() {
                     </View>
                     <View style={{flex:1, margin:5}}>
                         <Button title="Unselect All" onPress={()=>{
-                            console.log('delete selected item')
+                            selectedItems.forEach( (v, k)=>{
+                                v.setChecked(false);
+                            })
                         }}></Button>
                     </View>
                 </View>
