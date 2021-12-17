@@ -17,22 +17,19 @@ import CheckBox from 'react-native-check-box';
 const Styles = StyleSheet.create({
     textStyle:{
         borderStyle: 'solid', 
-        backgroundColor:'#dadad0',
+        backgroundColor:'white',
         width: '100%',
         margin: 10
     },
 
     ViewStyle:{
-        marginRight:'5%',
         justifyContent: 'center',
-        alignItems: 'center',
         flex:1,
         minHeight:1
     },
 
     ViewStyleBehind:{
         padding:10,
-        backgroundColor:'white',
         justifyContent: 'center',
         alignItems: 'center',
         flex:1,
@@ -59,64 +56,88 @@ export default function(props : any){
         }}>
             {/* Create Shop & Inventory Dropdown Panel */}
             <View style={Styles.ViewStyle}>
-                <Text style={{padding:10, color:'white'}}>Select/Create Shop & Inventory </Text>
+                
+                <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={{padding:10, color:'white'}}>Select/Create Shop & Inventory </Text>
+                </View>
 
                 {/* rows container */}
-                <View style={{flex:1}}>
+                <View style={{flex:1, flexDirection: 'column'}}>
 
                     {/* row-1 : shop dropdown and checkbox */}
-                    <View style={{flex:1, flexDirection: 'row', margin:10}}>
-                        <DropDownPicker 
-                            open={shopDropdownState}
-                            setOpen={setShopDropdownOpen}
-                            listMode="SCROLLVIEW"
-                            scrollViewProps={{
-                                nestedScrollEnabled: true,
-                            }}
-                            style={{
-                                backgroundColor: "white",
-                                zIndex:1000,
-                                flex:1
-                            }}
-                            value={value}
-                            setValue={setValue}
-                            setItems={setItems}
-                            items={items}
-                            placeholder="Select Shop"
-                        />
-                        <CheckBox
-                            style={{flex:1}}
-                            onClick={()=>{}}
-                            isChecked={false}
-                        />
-                    </View>
+                    <View style={{flex:1, flexDirection: 'row', backgroundColor:'yellow', padding:10, zIndex:100}}>
 
-                    {/* row-2 : inv. dropdown and checkbox */}
-                    <View style={{flex:1, flexDirection: 'row', margin:10}}>
-                        <DropDownPicker 
-                            open={invpDropdownState}
-                            setOpen={setInvDropdownOpen}
-                            listMode="SCROLLVIEW"
-                            scrollViewProps={{
-                                nestedScrollEnabled: true,
-                            }}
-                            style={{
-                                backgroundColor: "crimson",
-                                zIndex:999
-                            }}
-                            value={value}
-                            setValue={setValue}
-                            setItems={setItems}
-                            items={items}
-                            placeholder="Select Inventory"
-                        />
-                        <CheckBox
-                            style={{flex:1}}
-                            onClick={()=>{}}
-                            isChecked={false}
-                        />
+                        {/*col-0 : dropdown*/}
+                        <View style={{flex:2}}>
+                            <DropDownPicker 
+                                open={shopDropdownState}
+                                setOpen={setShopDropdownOpen}
+                                listMode="SCROLLVIEW"
+                                scrollViewProps={{
+                                    nestedScrollEnabled: true,
+                                }}
+                                style={{
+                                    backgroundColor: "white",
+                                    zIndex:1000
+                                }}
+                                value={value}
+                                setValue={setValue}
+                                setItems={setItems}
+                                items={items}
+                                placeholder="Select Shop"
+                            />
+                        </View>
+
+                        {/*col-1: checkbox*/}
+                        <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+                            <CheckBox
+                                onClick={()=>{}}
+                                isChecked={false}
+                                leftText="New"
+                            />
+                        </View>
+                    
                     </View>
+                    {/* ----- end of row-1 -----------*/}
+
+                    {/* row-2 : shop dropdown and checkbox */}
+                    <View style={{flex:1, flexDirection: 'row', backgroundColor:'green', padding:10, zIndex:99}}>
+
+                        {/*col-0 : dropdown*/}
+                        <View style={{flex:2}}>
+                            <DropDownPicker 
+                                open={shopDropdownState}
+                                setOpen={setShopDropdownOpen}
+                                listMode="SCROLLVIEW"
+                                scrollViewProps={{
+                                    nestedScrollEnabled: true,
+                                }}
+                                style={{
+                                    backgroundColor: "white",
+                                    zIndex:1000
+                                }}
+                                value={value}
+                                setValue={setValue}
+                                setItems={setItems}
+                                items={items}
+                                placeholder="Select Inventory"
+                            />
+                        </View>
+
+                        {/*col-1: checkbox*/}
+                        <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+                            <CheckBox
+                                onClick={()=>{}}
+                                isChecked={false}
+                                leftText="New"
+                            />
+                        </View>
+                    
+                    </View>
+                    {/* ----- end of row-2 -----------*/}
+
                 </View>
+
             </View>
 
             {/* Product Information Inputs */}
