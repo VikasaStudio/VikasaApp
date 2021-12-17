@@ -54,14 +54,14 @@ export default function(props: any){
 
                 {/*right cell*/}
                 <View style={styles.cell}>
-                <CheckBox
-                    style={{flex: 1, padding: 10}}
-                    onClick={()=>{
-                        setChecked(!isChecked);
-                    }}
-                    isChecked={isChecked}
-                    leftText={"CheckBox"}
-                />
+                    <CheckBox
+                        style={{flex: 1, padding: 10}}
+                        onClick={()=>{
+                            setChecked(!isChecked);
+                        }}
+                        isChecked={isChecked}
+                        leftText={"CheckBox"}
+                    />
                 </View>
             </View>
         </TouchableOpacity>

@@ -12,6 +12,7 @@ import { GlobalContext } from '../../context/GlobalContext';
 import React, {useContext, useState} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { ScrollView } from 'react-native-gesture-handler';
+import CheckBox from 'react-native-check-box';
 
 const Styles = StyleSheet.create({
     textStyle:{
@@ -22,11 +23,10 @@ const Styles = StyleSheet.create({
     },
 
     ViewStyle:{
-        padding:10,
+        marginRight:'5%',
         justifyContent: 'center',
         alignItems: 'center',
         flex:1,
-        flexDirection: 'column',
         minHeight:1
     },
 
@@ -42,21 +42,13 @@ const Styles = StyleSheet.create({
 })
 
 export default function(props : any){
-    const [isDropdownOpen, setDropdownState] = useState(false);
+    const [shopDropdownState, setShopDropdownOpen] = useState(false);
+    const [invpDropdownState, setInvDropdownOpen] = useState(false);
+
     const [value, setValue] = useState(null);
+    
     const [items, setItems] = useState([
-        {label: 'Apple', value: 'apple'},
-        {label: 'Banana', value: 'banana'},
-        {label: 'a', value: 'a'},
-        {label: 'b', value: 'b'},
-        {label: 'c', value: 'c'},
-        {label: 'd', value: 'd'},
-        {label: 'e', value: 'e'},
-        {label: 'f', value: 'f'},
-        {label: 'f2', value: '2f'},
-        {label: '3f', value: '3f'},
-        {label: '4f', value: 'f4'},
-        {label: 'f5', value: '5f'},
+        {label: 'Apple', value: 'apple'}
     ]);
 
     return (
@@ -68,41 +60,63 @@ export default function(props : any){
             {/* Create Shop & Inventory Dropdown Panel */}
             <View style={Styles.ViewStyle}>
                 <Text style={{padding:10, color:'white'}}>Select/Create Shop & Inventory </Text>
-                
-                <DropDownPicker 
-                    open={isDropdownOpen}
-                    setOpen={setDropdownState}
-                    listMode="SCROLLVIEW"
-                    scrollViewProps={{
-                        nestedScrollEnabled: true,
-                    }}
-                    style={{
-                        backgroundColor: "crimson",
-                        zIndex:1000,
-                        marginBottom:10,
-                      }}
-                    value={value}
-                    setValue={setValue}
-                    setItems={setItems}
-                    items={items}
-                />
 
-                <DropDownPicker 
-                    open={isDropdownOpen}
-                    setOpen={setDropdownState}
-                    listMode="SCROLLVIEW"
-                    scrollViewProps={{
-                        nestedScrollEnabled: true,
-                    }}
-                    style={{
-                        backgroundColor: "crimson",
-                        zIndex:999
-                      }}
-                    value={value}
-                    setValue={setValue}
-                    setItems={setItems}
-                    items={items}
-                />
+                {/* rows container */}
+                <View style={{flex:1}}>
+
+                    {/* row-1 : shop dropdown and checkbox */}
+                    <View style={{flex:1, flexDirection: 'row', margin:10}}>
+                        <DropDownPicker 
+                            open={shopDropdownState}
+                            setOpen={setShopDropdownOpen}
+                            listMode="SCROLLVIEW"
+                            scrollViewProps={{
+                                nestedScrollEnabled: true,
+                            }}
+                            style={{
+                                backgroundColor: "white",
+                                zIndex:1000,
+                                flex:1
+                            }}
+                            value={value}
+                            setValue={setValue}
+                            setItems={setItems}
+                            items={items}
+                            placeholder="Select Shop"
+                        />
+                        <CheckBox
+                            style={{flex:1}}
+                            onClick={()=>{}}
+                            isChecked={false}
+                        />
+                    </View>
+
+                    {/* row-2 : inv. dropdown and checkbox */}
+                    <View style={{flex:1, flexDirection: 'row', margin:10}}>
+                        <DropDownPicker 
+                            open={invpDropdownState}
+                            setOpen={setInvDropdownOpen}
+                            listMode="SCROLLVIEW"
+                            scrollViewProps={{
+                                nestedScrollEnabled: true,
+                            }}
+                            style={{
+                                backgroundColor: "crimson",
+                                zIndex:999
+                            }}
+                            value={value}
+                            setValue={setValue}
+                            setItems={setItems}
+                            items={items}
+                            placeholder="Select Inventory"
+                        />
+                        <CheckBox
+                            style={{flex:1}}
+                            onClick={()=>{}}
+                            isChecked={false}
+                        />
+                    </View>
+                </View>
             </View>
 
             {/* Product Information Inputs */}
