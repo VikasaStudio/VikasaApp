@@ -26,11 +26,11 @@ export default function(props: any){
     const [isChecked, setChecked] = useState(false);
     useEffect(()=>{
         if(isChecked && props.onItemSelect){
-            props.onItemSelect(props);
+            props.onItemSelect({...props, setChecked});
         }
         else if(!isChecked && props.onItemUnselect){
-            props.onItemUnselect(props);
-        }
+            props.onItemUnselect({...props, setChecked});
+        }   
     }, [isChecked]);
 
     return (
