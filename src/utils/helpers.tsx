@@ -96,6 +96,26 @@ export async function createEmptyStore(data : any){
 /**
  * 
  * @param data 
+ * @summary Fetch all stores associated with given vendor
+ */
+ export async function getStores(data : any){
+    const res = await fetch(`${CONFIG.VikasaAPI}/shop`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    console.log(res);
+    if(res.status != 200)
+        throw new Error("Failed to fetch store details")
+    return res;
+}
+
+/**
+ * 
+ * @param data 
  * @summary Creates empty inventory within a store, with no items added.
  */
 export async function createEmptyInventory(data : any){

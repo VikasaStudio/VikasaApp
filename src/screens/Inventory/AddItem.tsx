@@ -14,6 +14,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
+import { createEmptyStore } from '../../utils/helpers';
 
 const Styles = StyleSheet.create({
     textInputStyle:{
@@ -40,15 +41,21 @@ const Styles = StyleSheet.create({
 })
 
 export default function(props : any){
+
+    // Stores the state of dropdowns (whether open/close)
     const [shopDropdownState, setShopDropdownOpen] = useState(false);
     const [invDropdownState, setInvDropdownOpen] = useState(false);
 
-    const [value, setValue] = useState(null);
+    // Stores the current selected value of dropdowns
+    const [shopDropdownSelectedValue, setShopDropdownSelectedValue] = useState(null);
+    const [invDropdownSelectedValue, setInvDropdownSelectedValue] = useState(null);
     
+    // Manage whether we want to show dropdown or text input
     const [shopIndex, setShopIndex] = useState(0)
     const [invIndex, setInvIndex] = useState(0)
 
-    const [items, setItems] = useState([
+    // Stores Content of Dropdowns
+    const [shopDropdownItems, setShopDropdownItems] = useState([
         {label: 'Apple', value: 'apple'},
         {label: 'Banana', value: 'banana'},
         {label: 'Lime', value: 'lime'},
@@ -57,6 +64,25 @@ export default function(props : any){
         {label: 'Vanilla', value: 'Vanilla'},
         {label: 'Tomato', value: 'tomato'}
     ]);
+    const [invDropdownItems, setInvDropdownItems] = useState([
+        {label: 'Apple', value: 'apple'},
+        {label: 'Banana', value: 'banana'},
+        {label: 'Lime', value: 'lime'},
+        {label: 'Chocolate', value: 'Chocolate'},
+        {label: 'Strawberry', value: 'Strawberry'},
+        {label: 'Vanilla', value: 'Vanilla'},
+        {label: 'Tomato', value: 'tomato'}
+    ]);
+
+
+    // Additional Text Inputs value
+    const [itemName, setItemName] = useState('')
+    const [itemCategory, setItemCategory] = useState('')
+    const [itemVariant, setItemVariant] = useState('')
+    const [itemQuantity, setItemQuantity] = useState('')
+    const [itemPrice, setItemPrice] = useState('')
+    const [itemDesc, setItemDesc] = useState('')
+
 
     // Load Shops and Inventory
     useEffect(()=>{
@@ -91,10 +117,10 @@ export default function(props : any){
                                     style={{
                                         zIndex:100
                                     }}
-                                    value={value}
-                                    setValue={setValue}
-                                    setItems={setItems}
-                                    items={items}
+                                    value={shopDropdownSelectedValue}
+                                    setValue={setShopDropdownSelectedValue}
+                                    setItems={setShopDropdownItems}
+                                    items={shopDropdownItems}
                                     placeholder="Select Shop"
                                     onOpen={()=>{
                                         setInvDropdownOpen(false)
@@ -137,10 +163,10 @@ export default function(props : any){
                                         backgroundColor: "white",
                                         zIndex:0
                                     }}
-                                    value={value}
-                                    setValue={setValue}
-                                    setItems={setItems}
-                                    items={items}
+                                    value={invDropdownSelectedValue}
+                                    setValue={setInvDropdownSelectedValue}
+                                    setItems={setInvDropdownItems}
+                                    items={invDropdownItems}
                                     placeholder="Select Inventory"
                                     onOpen={()=>{
                                         setShopDropdownOpen(false)
@@ -175,30 +201,62 @@ export default function(props : any){
                 <Text style={{padding:10}}>  Product Information </Text>
                 <TextInput style={Styles.textInputStyle}
                     placeholder="Name"
+                    onChangeText={setItemName}
                 />
 
                 <TextInput style={Styles.textInputStyle}
                     placeholder="Category"
+                    onChangeText={setItemCategory}
                 />
                 <TextInput style={Styles.textInputStyle}
                     placeholder="Variant"
+                    onChangeText={setItemVariant}
                 />
                 <TextInput style={Styles.textInputStyle}
                     placeholder="Quantity"
+                    onChangeText={setItemQuantity}
                 />
                 <TextInput style={Styles.textInputStyle}
                     placeholder="Price/Unit"
+                    onChangeText={setItemPrice}
                 />
                 <TextInput style={Styles.textInputStyle}
                     placeholder="Description"
+                    onChangeText={setItemDesc}
                     editable
                     multiline
                 />
             </View>
 
             <View style={{flex:1}}>
-                <Button title="Create" onPress={(e : any)=>{
-                    
+                <Button title="Create" onPress={async (e : any)=>{
+                    // Create Shop
+                    var itemDetail = {
+                        name: itemName,
+                        category: itemCategory,
+                        variant: itemVariant,
+                        quantity: itemQuantity,
+                        price: itemPrice,
+                        description: itemDesc,
+                        storeId: null,
+                        inventoryId: null
+                    }
+                    console.log(itemDetail)
+                    var storeId = null;
+                    var isNewShopRequired : boolean = (shopIndex === 1);
+                    var isNewInvRequired : boolean = (invIndex === 1);
+                    if(isNewShopRequired){
+                        // create new shop.
+                        storeId = await createEmptyStore({
+                            vendorId: 'keshav',
+                            localDomain: 'www.abc.com',
+                            displayName: 'keshav1',
+                            description: 'test'
+                        }).catch(err=>{console.log(err)});
+                    }
+                    if(isNewInvRequired){
+                        // create new inventory.
+                    }
                 }}/>
             </View>
         </ScrollView>
