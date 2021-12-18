@@ -13,6 +13,7 @@ import React, {useContext, useState} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
+import ToggableViewContainer from '../../components/ToggableViewContainer';
 
 const Styles = StyleSheet.create({
     textStyle:{
@@ -33,26 +34,31 @@ const Styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         flex:1,
-        zIndex:-5,
+        zIndex:1,
         flexDirection: 'column',
     }
 })
 
 export default function(props : any){
     const [shopDropdownState, setShopDropdownOpen] = useState(false);
-    const [invpDropdownState, setInvDropdownOpen] = useState(false);
+    const [invDropdownState, setInvDropdownOpen] = useState(false);
 
     const [value, setValue] = useState(null);
     
+    const [shopIndex, setShopIndex] = useState(0)
+    const [invIndex, setInvIndex] = useState(0)
+
     const [items, setItems] = useState([
-        {label: 'Apple', value: 'apple'}
+        {label: 'Apple', value: 'apple'},
+        {label: 'Banana', value: 'banana'},
+        {label: 'Lime', value: 'lime'},
+        {label: 'Tomato', value: 'tomato'}
     ]);
 
     return (
         <ScrollView nestedScrollEnabled={true}  style={{
             flex: 1,
-            flexDirection: 'column',
-            backgroundColor: "#1A1A22"
+            flexDirection: 'column'
         }}>
             {/* Create Shop & Inventory Dropdown Panel */}
             <View style={Styles.ViewStyle}>
@@ -62,37 +68,43 @@ export default function(props : any){
                 </View>
 
                 {/* rows container */}
-                <View style={{flex:1, flexDirection: 'column'}}>
+                <View style={{flex:1, flexDirection: 'column', minHeight:1}}>
 
                     {/* row-1 : shop dropdown and checkbox */}
-                    <View style={{flex:1, flexDirection: 'row', backgroundColor:'yellow', padding:10, zIndex:100}}>
+                    <View style={{flex:1, flexDirection: 'row', padding:10, zIndex:100, minHeight:1}}>
 
                         {/*col-0 : dropdown*/}
-                        <View style={{flex:2}}>
-                            <DropDownPicker 
-                                open={shopDropdownState}
-                                setOpen={setShopDropdownOpen}
-                                listMode="SCROLLVIEW"
-                                scrollViewProps={{
-                                    nestedScrollEnabled: true,
-                                }}
-                                style={{
-                                    backgroundColor: "white",
-                                    zIndex:1000
-                                }}
-                                value={value}
-                                setValue={setValue}
-                                setItems={setItems}
-                                items={items}
-                                placeholder="Select Shop"
-                            />
+                        <View style={{flex:4, minHeight:1}}>
+                            <ToggableViewContainer index={shopIndex}>
+                                <DropDownPicker 
+                                    open={shopDropdownState}
+                                    setOpen={setShopDropdownOpen}
+                                    listMode="SCROLLVIEW"
+                                    scrollViewProps={{
+                                        nestedScrollEnabled: true,
+                                    }}
+                                    style={{
+                                        zIndex:1000
+                                    }}
+                                    value={value}
+                                    setValue={setValue}
+                                    setItems={setItems}
+                                    items={items}
+                                    placeholder="Select Shop"
+                                />
+                                <TextInput style={Styles.textStyle}
+                                    placeholder="New Shop"
+                                />
+                            </ToggableViewContainer>
                         </View>
 
                         {/*col-1: checkbox*/}
-                        <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+                        <View style={{flex:1, justifyContent: 'center', paddingLeft:10, minHeight:1}}>
                             <CheckBox
-                                onClick={()=>{}}
-                                isChecked={false}
+                                onClick={()=>{
+                                    setShopIndex((shopIndex + 1)%2)
+                                }}
+                                isChecked={(shopIndex === 1)}
                                 leftText="New"
                             />
                         </View>
@@ -101,34 +113,41 @@ export default function(props : any){
                     {/* ----- end of row-1 -----------*/}
 
                     {/* row-2 : shop dropdown and checkbox */}
-                    <View style={{flex:1, flexDirection: 'row', backgroundColor:'green', padding:10, zIndex:99}}>
+                    <View style={{flex:1, flexDirection: 'row', padding:10, zIndex:99,  minHeight:1}}>
 
                         {/*col-0 : dropdown*/}
-                        <View style={{flex:2}}>
-                            <DropDownPicker 
-                                open={shopDropdownState}
-                                setOpen={setShopDropdownOpen}
-                                listMode="SCROLLVIEW"
-                                scrollViewProps={{
-                                    nestedScrollEnabled: true,
-                                }}
-                                style={{
-                                    backgroundColor: "white",
-                                    zIndex:1000
-                                }}
-                                value={value}
-                                setValue={setValue}
-                                setItems={setItems}
-                                items={items}
-                                placeholder="Select Inventory"
-                            />
+                        <View style={{flex:4, minHeight:1}}>
+                            <ToggableViewContainer index={invIndex}>
+                                <DropDownPicker 
+                                    open={invDropdownState}
+                                    setOpen={setInvDropdownOpen}
+                                    listMode="SCROLLVIEW"
+                                    scrollViewProps={{
+                                        nestedScrollEnabled: true,
+                                    }}
+                                    style={{
+                                        backgroundColor: "white",
+                                        zIndex:1000
+                                    }}
+                                    value={value}
+                                    setValue={setValue}
+                                    setItems={setItems}
+                                    items={items}
+                                    placeholder="Select Inventory"
+                                />
+                                <TextInput style={Styles.textStyle}
+                                    placeholder="New Inventory"
+                                />
+                            </ToggableViewContainer>
                         </View>
 
                         {/*col-1: checkbox*/}
-                        <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+                        <View style={{flex:1, justifyContent: 'center', paddingLeft:10}}>
                             <CheckBox
-                                onClick={()=>{}}
-                                isChecked={false}
+                                onClick={()=>{
+                                    setInvIndex((invIndex+1)%2)
+                                }}
+                                isChecked={(invIndex === 1)}
                                 leftText="New"
                             />
                         </View>
