@@ -9,18 +9,18 @@ import {
   } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { GlobalContext } from '../../context/GlobalContext';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
 
 const Styles = StyleSheet.create({
-    textStyle:{
+    textInputStyle:{
         borderStyle: 'solid', 
         backgroundColor:'white',
         width: '100%',
-        margin: 10
+        margin:5
     },
 
     ViewStyle:{
@@ -29,13 +29,13 @@ const Styles = StyleSheet.create({
         minHeight:1
     },
 
-    ViewStyleBehind:{
+    productInfoView:{
         padding:10,
+        minHeight:1,
         justifyContent: 'center',
         alignItems: 'center',
-        flex:1,
-        zIndex:1,
-        flexDirection: 'column',
+        flex:5,
+        flexDirection: 'column'
     }
 })
 
@@ -52,14 +52,19 @@ export default function(props : any){
         {label: 'Apple', value: 'apple'},
         {label: 'Banana', value: 'banana'},
         {label: 'Lime', value: 'lime'},
+        {label: 'Chocolate', value: 'Chocolate'},
+        {label: 'Strawberry', value: 'Strawberry'},
+        {label: 'Vanilla', value: 'Vanilla'},
         {label: 'Tomato', value: 'tomato'}
     ]);
 
+    // Load Shops and Inventory
+    useEffect(()=>{
+        console.log('Load Shop and Inventory')
+    }, [])
+
     return (
-        <ScrollView nestedScrollEnabled={true}  style={{
-            flex: 1,
-            flexDirection: 'column'
-        }}>
+        <ScrollView nestedScrollEnabled={true} style={{flex:1}}>
             {/* Create Shop & Inventory Dropdown Panel */}
             <View style={Styles.ViewStyle}>
                 
@@ -71,7 +76,7 @@ export default function(props : any){
                 <View style={{flex:1, flexDirection: 'column', minHeight:1}}>
 
                     {/* row-1 : shop dropdown and checkbox */}
-                    <View style={{flex:1, flexDirection: 'row', padding:10, zIndex:100, minHeight:1}}>
+                    <View style={{flex:1, flexDirection: 'row', padding:10, minHeight:1}}>
 
                         {/*col-0 : dropdown*/}
                         <View style={{flex:4, minHeight:1}}>
@@ -84,15 +89,18 @@ export default function(props : any){
                                         nestedScrollEnabled: true,
                                     }}
                                     style={{
-                                        zIndex:1000
+                                        zIndex:100
                                     }}
                                     value={value}
                                     setValue={setValue}
                                     setItems={setItems}
                                     items={items}
                                     placeholder="Select Shop"
+                                    onOpen={()=>{
+                                        setInvDropdownOpen(false)
+                                    }}
                                 />
-                                <TextInput style={Styles.textStyle}
+                                <TextInput style={Styles.textInputStyle}
                                     placeholder="New Shop"
                                 />
                             </ToggableViewContainer>
@@ -113,7 +121,7 @@ export default function(props : any){
                     {/* ----- end of row-1 -----------*/}
 
                     {/* row-2 : shop dropdown and checkbox */}
-                    <View style={{flex:1, flexDirection: 'row', padding:10, zIndex:99,  minHeight:1}}>
+                    <View style={{flex:1, flexDirection: 'row', padding:10, minHeight:1}}>
 
                         {/*col-0 : dropdown*/}
                         <View style={{flex:4, minHeight:1}}>
@@ -127,15 +135,18 @@ export default function(props : any){
                                     }}
                                     style={{
                                         backgroundColor: "white",
-                                        zIndex:1000
+                                        zIndex:0
                                     }}
                                     value={value}
                                     setValue={setValue}
                                     setItems={setItems}
                                     items={items}
                                     placeholder="Select Inventory"
+                                    onOpen={()=>{
+                                        setShopDropdownOpen(false)
+                                    }}
                                 />
-                                <TextInput style={Styles.textStyle}
+                                <TextInput style={Styles.textInputStyle}
                                     placeholder="New Inventory"
                                 />
                             </ToggableViewContainer>
@@ -160,36 +171,36 @@ export default function(props : any){
             </View>
 
             {/* Product Information Inputs */}
-            <View style={Styles.ViewStyleBehind}>
+            <View style={Styles.productInfoView}>
                 <Text style={{padding:10}}>  Product Information </Text>
-                <TextInput style={Styles.textStyle}
+                <TextInput style={Styles.textInputStyle}
                     placeholder="Name"
                 />
 
-                <TextInput style={Styles.textStyle}
+                <TextInput style={Styles.textInputStyle}
                     placeholder="Category"
                 />
-                <TextInput style={Styles.textStyle}
+                <TextInput style={Styles.textInputStyle}
                     placeholder="Variant"
                 />
-                <TextInput style={Styles.textStyle}
+                <TextInput style={Styles.textInputStyle}
                     placeholder="Quantity"
                 />
-                <TextInput style={Styles.textStyle}
+                <TextInput style={Styles.textInputStyle}
                     placeholder="Price/Unit"
                 />
-                <TextInput style={Styles.textStyle}
+                <TextInput style={Styles.textInputStyle}
                     placeholder="Description"
                     editable
                     multiline
                 />
             </View>
 
-
-            <Button title="Create" onPress={(e : any)=>{
-                
-            }}/>
-
+            <View style={{flex:1}}>
+                <Button title="Create" onPress={(e : any)=>{
+                    
+                }}/>
+            </View>
         </ScrollView>
     )
 }
