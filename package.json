@@ -25,6 +25,7 @@
     "react-native-screens": "^3.7.0",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.1.1",
+    "set-cookie-parser": "^2.4.8",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
@@ -35,6 +36,7 @@
     "@types/react-native": "^0.64.5",
     "@types/react-native-check-box": "^2.1.2",
     "@types/react-test-renderer": "^16.9.2",
+    "@types/set-cookie-parser": "^2.4.1",
     "babel-jest": "^26.6.3",
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.66.0",

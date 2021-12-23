@@ -1,5 +1,115 @@
 import CONFIG from './config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SetCookieParser from "set-cookie-parser"
+
+
+const getParsedCookiesMap = function(response : Response) {
+    console.log('---------- get parsed cookies map -------------')
+    console.log('response headers : ',response);
+    var combinedCookieHeader : any = response.headers.get('Set-Cookie');
+    var splitCookieHeaders = SetCookieParser.splitCookiesString(combinedCookieHeader)
+    var cookies = SetCookieParser.parse(splitCookieHeaders);
+    var cookieMap = new Map<any, any>();
+    console.log('cookies', cookies);
+    cookies.forEach(cookie => {
+        cookieMap.set(cookie.name, cookie);
+    });
+    return cookieMap;
+}
+
+//Convert Cookie Object to string.
+const serializeCookie = function(name:string, val:string, options:any) {
+    const fieldContentRegExp = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
+    const pairSplitRegExp = /; */;
+
+    var opt = options || {};
+    var encode = encodeURIComponent;
+    var enc = opt.encode || encode;
+
+    if (typeof enc !== 'function') {
+      throw new TypeError('option encode is invalid');
+    }
+  
+    if (!fieldContentRegExp.test(name)) {
+      throw new TypeError('argument name is invalid');
+    }
+  
+    var value = enc(val);
+  
+    if (value && !fieldContentRegExp.test(value)) {
+      throw new TypeError('argument val is invalid');
+    }
+  
+    var str = name + '=' + value;
+  
+    if (null != opt.maxAge) {
+      var maxAge = opt.maxAge - 0;
+  
+      if (isNaN(maxAge) || !isFinite(maxAge)) {
+        throw new TypeError('option maxAge is invalid')
+      }
+  
+      str += '; Max-Age=' + Math.floor(maxAge);
+    }
+  
+    if (opt.domain) {
+      if (!fieldContentRegExp.test(opt.domain)) {
+        throw new TypeError('option domain is invalid');
+      }
+  
+      str += '; Domain=' + opt.domain;
+    }
+  
+    if (opt.path) {
+      if (!fieldContentRegExp.test(opt.path)) {
+        throw new TypeError('option path is invalid');
+      }
+  
+      str += '; Path=' + opt.path;
+    }
+  
+    if (opt.expires) {
+      if (typeof opt.expires.toUTCString !== 'function') {
+        throw new TypeError('option expires is invalid');
+      }
+  
+      str += '; Expires=' + opt.expires.toUTCString();
+    }
+  
+    if (opt.httpOnly) {
+      str += '; HttpOnly';
+    }
+  
+    if (opt.secure) {
+      str += '; Secure';
+    }
+  
+    if (opt.sameSite) {
+      var sameSite = typeof opt.sameSite === 'string'
+        ? opt.sameSite.toLowerCase() : opt.sameSite;
+  
+      switch (sameSite) {
+        case true:
+          str += '; SameSite=Strict';
+          break;
+        case 'lax':
+          str += '; SameSite=Lax';
+          break;
+        case 'strict':
+          str += '; SameSite=Strict';
+          break;
+        case 'none':
+          str += '; SameSite=None';
+          break;
+        default:
+          throw new TypeError('option sameSite is invalid');
+      }
+    }
+  
+    return str;
+  }
+
+
 /**
  * 
  * @param username 
@@ -7,47 +117,65 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  * @returns Promise
  * @summary Attempts Login via local-strategy, if success then it stores cookies otherwise throws relevant error message.
  */
-export async function AttemptLocalLogin(username:string, password:string){
-    try{
-        return new Promise(async (resolve, reject) => {
-            const res = await fetch('http://10.0.2.2:3000/api/auth/vendor/login', {
-                method: 'POST',
-                credentials: 'include',
-                headers:{
-                    Accept: 'application/json',
-                    'Content-Type':'application/json'
-                },
-                body: JSON.stringify({
-                    "username": username,
-                    "password": password,
-                    "strategy": "local"
-                })
-            });
-            console.log(res);
-            console.log('headers', res.headers);
-            let cookie = res.headers.get('set-cookie');
-            console.log('cookie :',cookie);
-            console.log(res.status);
 
-            if(res.status == 200) {
+export async function AttemptLocalLogin(username:string, password:string) 
+{
+    //check if any access token stored.
+    var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
+    var parsedAccessTokenCookie = null;
+    if(storedAccessTokenCookie != null)
+        parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
+    
+    console.log(`parsed AccessToken : ${parsedAccessTokenCookie}`)
 
-                //persist the cookies.
-                await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.AccessToken,"value");
-                await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.RefreshToken,"value");
-                await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.Username,"value");
-                console.log(' [AttemptLocalLogin] : SharedPreferences set');
+    const header = new Headers({
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    });
 
-                resolve(username);
-            }
-            const responseJSON = await res.json();
-            console.log(responseJSON);
-            reject(responseJSON);
-        });
+    if(parsedAccessTokenCookie)
+    {
+        var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
+        console.log('stringify cookie = ',stringifiedCookie)
+        header.append('Cookie', stringifiedCookie)
+    }
+    const res = await fetch(`${CONFIG.VikasaAPI}/auth/vendor/login`, {
+        headers:header,
+        credentials: 'include',
+        method: 'POST',
+        body: JSON.stringify({
+            "username": username,
+            "password": password,
+            "strategy": "local"
+        })
+    });
+
+    // Either user was already logged in or this is a new login.
+    if(res.status == 200) {
+
+        const cookies = getParsedCookiesMap(res);
+        console.log(`Cookie Map : `, cookies);
+
+        //no need to persist cookie, existing cookies are valid.
+        if(cookies.size === 0)
+            return username;
+
+        //persist the cookies.
+
+        //store entire object as stringified json
+        await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.AccessToken, 
+            JSON.stringify(cookies.get(CONFIG.SharedPreferenceKeys.AccessToken)));
         
+        await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.RefreshToken,
+            JSON.stringify(cookies.get(CONFIG.SharedPreferenceKeys.RefreshToken)));
+
+        await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.Username, "value");
+
+        return username;
     }
-    catch(err){
-        console.error(err);
-    }
+    const responseJSON = await res.json();
+    console.log(responseJSON);
+    throw new Error(responseJSON);
 }
 
 /**
