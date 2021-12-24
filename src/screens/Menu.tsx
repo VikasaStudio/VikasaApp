@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/core';
 import React, {useContext, useState} from 'react';
+import {logout} from '../utils/networking'
 import {
     Button,
     Text,
@@ -24,7 +25,9 @@ export default function() {
         {/* Logout Button */}
         <Button
             onPress={(e : any) => {
-                globalContextValue.setUsername(null)
+                logout(globalContextValue).then(() => {
+                    console.log('Logged out')
+                })
             }}
             title="Log out"
             color="#841584"

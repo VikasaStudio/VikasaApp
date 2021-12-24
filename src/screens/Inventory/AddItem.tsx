@@ -14,7 +14,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
-import { createEmptyStore } from '../../utils/helpers';
+import { createEmptyStore } from '../../utils/networking';
 
 const Styles = StyleSheet.create({
     textInputStyle:{

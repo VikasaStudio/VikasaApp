@@ -6,7 +6,7 @@ import ToggableViewContainer from '../components/ToggableViewContainer';
 import { GlobalContext } from '../context/GlobalContext';
 import LoginView from '../components/Login/LoginView';
 import RegisterView from '../components/Register/RegisterView';
-import { AttemptLocalLogin, registerVendor, checkIfSessionActive } from '../utils/helpers';
+import { AttemptLocalLogin, registerVendor, checkIfTokenValid } from '../utils/networking';
 
 
 
@@ -35,12 +35,12 @@ export default function AuthScreen() {
     
     //executed once
     useEffect(function() {
-        checkIfSessionActive().then((val)=>{
-
-        }).catch(err=>{
-
-        });
+        async function checkAuthenticationStatus(){
+            await checkIfTokenValid(globalContextValue);
+        }
+        checkAuthenticationStatus();
     }, [])
+
     return (
         <View style={{
             flex : 1,

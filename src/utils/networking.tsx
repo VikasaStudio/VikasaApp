@@ -2,7 +2,6 @@ import CONFIG from './config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SetCookieParser from "set-cookie-parser"
 
-
 const getParsedCookiesMap = function(response : Response) {
     console.log('---------- get parsed cookies map -------------')
     console.log('response headers : ',response);
@@ -17,7 +16,14 @@ const getParsedCookiesMap = function(response : Response) {
     return cookieMap;
 }
 
-//Convert Cookie Object to string.
+
+/**
+ * Taken from :  https://github.com/jshttp/cookie/blob/master/index.js
+ * @param name 
+ * @param val 
+ * @param options 
+ * @returns string
+ */
 const serializeCookie = function(name:string, val:string, options:any) {
     const fieldContentRegExp = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
     const pairSplitRegExp = /; */;
@@ -107,7 +113,7 @@ const serializeCookie = function(name:string, val:string, options:any) {
     }
   
     return str;
-  }
+}
 
 
 /**
@@ -149,10 +155,10 @@ export async function AttemptLocalLogin(username:string, password:string)
             "strategy": "local"
         })
     });
-
+    const responseJSON = await res.json();
+    console.log(responseJSON);
     // Either user was already logged in or this is a new login.
     if(res.status == 200) {
-
         const cookies = getParsedCookiesMap(res);
         console.log(`Cookie Map : `, cookies);
 
@@ -169,29 +175,109 @@ export async function AttemptLocalLogin(username:string, password:string)
         await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.RefreshToken,
             JSON.stringify(cookies.get(CONFIG.SharedPreferenceKeys.RefreshToken)));
 
-        await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.Username, "value");
+        await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.Username, username);
 
         return username;
     }
-    const responseJSON = await res.json();
     console.log(responseJSON);
     throw new Error(responseJSON);
 }
 
 /**
- * @summary Checks if any previous session is already active.
+ * @summary Checks if any previous session is already active if access token and refresh tokens are available.
+ * @returns Promise : boolean
  */
-export async function checkIfSessionActive(){
-    const res = await fetch(`${CONFIG.VikasaAPI}/auth/vendor/login`, {
-        headers:{
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
+export async function checkIfTokenValid(globalContextValue : any) {
+    try
+    {
+        //check if any access token stored.
+        var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
+        var storedRefreshTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.RefreshToken);
+
+        var parsedAccessTokenCookie = null;
+        var parsedRefreshTokenCookie = null;
+
+        // both must be available.
+        if(storedAccessTokenCookie && storedRefreshTokenCookie) {
+            parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
+            parsedRefreshTokenCookie = JSON.parse(storedRefreshTokenCookie);
         }
-    });
+        else {
+            globalContextValue.setUsername(null);
+            return;
+        }
+
+        const header = new Headers({
+            'Content-Type': 'application/json', 
+            'Accept': 'application/json'
+        });
+
+        if(!parsedAccessTokenCookie){
+            globalContextValue.setUsername(null)
+            return;
+        }
+        //attempt login using existing access token
+        var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
+        header.append('Cookie', stringifiedCookie)
+        const res = await fetch(`${CONFIG.VikasaAPI}/auth/vendor/login`, {
+            headers:header,
+            credentials: 'include',
+            method: 'POST'
+        });
+
+        if(res.status == 200){
+            let username = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.Username);
+            globalContextValue.setUsername(username)
+            return;
+        }
+
+        //attempt to regenerate access token using refresh token
+        var stringifiedCookie = serializeCookie(parsedRefreshTokenCookie.name, parsedRefreshTokenCookie.value, parsedRefreshTokenCookie);
+        const header2 = new Headers({
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Cookie': stringifiedCookie
+        })
+
+        const renew_res = await fetch(`${CONFIG.VikasaAPI}/auth/renewtoken`, {
+            headers: header2,
+            credentials: 'include',
+            method: 'POST'
+        });
+
+        if(renew_res.status == 200)
+        {
+            const cookies = getParsedCookiesMap(res);
+
+            //no need to persist cookie, existing cookies are valid.
+            if(cookies.size === 0){
+                globalContextValue.setUsername(null)
+                return
+            }
+
+            //store new access token as stringified json
+            await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.AccessToken, 
+                JSON.stringify(cookies.get(CONFIG.SharedPreferenceKeys.AccessToken)));
+            
+            let username = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.Username);
+            globalContextValue.setUsername(username)
+            return;
+        }
+        
+        //refresh token expired, log-out and remove shared preference keys.
+        await logout(globalContextValue);
+    }
+    catch(err) {
+        console.log('Error while verifying if token valid. : ', err);
+        globalContextValue.setUsername(null)
+    }
 }
 
 
-export function logout(globalContextValue : any){
+export async function logout(globalContextValue : any){
+    await AsyncStorage.removeItem(CONFIG.SharedPreferenceKeys.AccessToken);
+    await AsyncStorage.removeItem(CONFIG.SharedPreferenceKeys.RefreshToken);
+    await AsyncStorage.removeItem(CONFIG.SharedPreferenceKeys.Username);
     globalContextValue.setUsername(null);
 }
 

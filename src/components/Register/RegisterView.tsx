@@ -6,7 +6,7 @@ import {
     View  } from 'react-native';
 
 import styles from '../../styles/GlobalStyle';
-import { registerVendor, sendMobileOTP, verifyOTP } from '../../utils/helpers';
+import { registerVendor, sendMobileOTP, verifyOTP } from '../../utils/networking';
 
 
 import ToggableViewContainer from '../ToggableViewContainer';
