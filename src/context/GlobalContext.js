@@ -15,13 +15,15 @@ function GlobalContextProvider(props){
 
     var [theme, setTheme] = useState(defaultTheme);
     var [username, setUsername] = useState(null);
-
+    var [accessTokenCookie, setAccessTokenCookie] = useState(null);
     return (
         <GlobalContext.Provider value = {{
             theme, 
             username,
+            accessTokenCookie,
             setTheme,
-            setUsername
+            setUsername,
+            setAccessTokenCookie
         }}>
             {props.children}
         </GlobalContext.Provider>

@@ -17,15 +17,7 @@ import { AttemptLocalLogin, registerVendor, checkIfTokenValid } from '../utils/n
 
 var onLoginRequest = async (credentials: any, globalContextValue: any) => {
     console.log('----Login Requested-------');
-    let res = await AttemptLocalLogin(credentials.username, credentials.password).catch(err=>{
-        console.log(err);
-    });
-    if(res === credentials.username) {
-        globalContextValue.setUsername(res);
-    }
-    else {
-        globalContextValue.setUsername(null);
-    } 
+    await AttemptLocalLogin(credentials.username, credentials.password, globalContextValue);
 }
 
 export default function AuthScreen() {

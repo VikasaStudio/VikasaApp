@@ -14,7 +14,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
-import { createEmptyStore } from '../../utils/networking';
+import { createEmptyStore, getShops } from '../../utils/networking';
 
 const Styles = StyleSheet.create({
     textInputStyle:{
@@ -55,24 +55,8 @@ export default function(props : any){
     const [invIndex, setInvIndex] = useState(0)
 
     // Stores Content of Dropdowns
-    const [shopDropdownItems, setShopDropdownItems] = useState([
-        {label: 'Apple', value: 'apple'},
-        {label: 'Banana', value: 'banana'},
-        {label: 'Lime', value: 'lime'},
-        {label: 'Chocolate', value: 'Chocolate'},
-        {label: 'Strawberry', value: 'Strawberry'},
-        {label: 'Vanilla', value: 'Vanilla'},
-        {label: 'Tomato', value: 'tomato'}
-    ]);
-    const [invDropdownItems, setInvDropdownItems] = useState([
-        {label: 'Apple', value: 'apple'},
-        {label: 'Banana', value: 'banana'},
-        {label: 'Lime', value: 'lime'},
-        {label: 'Chocolate', value: 'Chocolate'},
-        {label: 'Strawberry', value: 'Strawberry'},
-        {label: 'Vanilla', value: 'Vanilla'},
-        {label: 'Tomato', value: 'tomato'}
-    ]);
+    const [shopDropdownItems, setShopDropdownItems] = useState(new Array());
+    const [invDropdownItems, setInvDropdownItems] = useState(new Array());
 
 
     // Additional Text Inputs value
@@ -83,10 +67,35 @@ export default function(props : any){
     const [itemPrice, setItemPrice] = useState('')
     const [itemDesc, setItemDesc] = useState('')
 
+    const globalContextValue = useContext(GlobalContext);
 
     // Load Shops and Inventory
     useEffect(()=>{
-        console.log('Load Shop and Inventory')
+        
+        var toLoad = true;
+        async function getVendorShops() {
+            let res = await getShops(globalContextValue).catch(err=>{
+                console.log('error while fetching shops ', err);
+            })
+            if(!toLoad)
+                return;
+            if(!res) {
+                setShopDropdownItems([]);
+                return;
+            }
+
+            let resArray = res.data.map((item: { displayName: any; storeId: any; }) =>{
+                return {
+                    'label': item.displayName, 
+                    'value': item.storeId
+                }
+            });
+
+            console.log('res-array', resArray)
+            setShopDropdownItems(resArray);
+        }
+        getVendorShops();
+        return ()=>{toLoad = false}
     }, [])
 
     return (

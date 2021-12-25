@@ -124,8 +124,9 @@ const serializeCookie = function(name:string, val:string, options:any) {
  * @summary Attempts Login via local-strategy, if success then it stores cookies otherwise throws relevant error message.
  */
 
-export async function AttemptLocalLogin(username:string, password:string) 
+export async function AttemptLocalLogin(username:string, password:string, globalContextValue : any) 
 {
+    console.log('Attempting Local Login');
     //check if any access token stored.
     var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
     var parsedAccessTokenCookie = null;
@@ -163,8 +164,18 @@ export async function AttemptLocalLogin(username:string, password:string)
         console.log(`Cookie Map : `, cookies);
 
         //no need to persist cookie, existing cookies are valid.
-        if(cookies.size === 0)
-            return username;
+        if(cookies.size === 0){
+            let cookieObject = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
+            if(cookieObject == null)
+            {
+                globalContextValue.setUsername(null);
+                globalContextValue.setAccessTokenCookie(null);
+                return;
+            }
+            cookieObject = JSON.parse(cookieObject);
+            globalContextValue.setUsername(username);
+            globalContextValue.setAccessTokenCookie(cookieObject);
+        }
 
         //persist the cookies.
 
@@ -176,10 +187,14 @@ export async function AttemptLocalLogin(username:string, password:string)
             JSON.stringify(cookies.get(CONFIG.SharedPreferenceKeys.RefreshToken)));
 
         await AsyncStorage.setItem(CONFIG.SharedPreferenceKeys.Username, username);
-
-        return username;
+        
+        globalContextValue.setUsername(username);
+        globalContextValue.setAccessTokenCookie(cookies.get(CONFIG.SharedPreferenceKeys.AccessToken));
     }
-    console.log(responseJSON);
+    else {
+        globalContextValue.setAccessTokenCookie(null);
+        globalContextValue.setUsername(null);
+    }
     throw new Error(responseJSON);
 }
 
@@ -260,6 +275,8 @@ export async function checkIfTokenValid(globalContextValue : any) {
                 JSON.stringify(cookies.get(CONFIG.SharedPreferenceKeys.AccessToken)));
             
             let username = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.Username);
+            globalContextValue.setAccessTokenCookie(cookies.get(CONFIG.SharedPreferenceKeys.AccessToken));
+
             globalContextValue.setUsername(username)
             return;
         }
@@ -278,6 +295,7 @@ export async function logout(globalContextValue : any){
     await AsyncStorage.removeItem(CONFIG.SharedPreferenceKeys.AccessToken);
     await AsyncStorage.removeItem(CONFIG.SharedPreferenceKeys.RefreshToken);
     await AsyncStorage.removeItem(CONFIG.SharedPreferenceKeys.Username);
+    globalContextValue.setAccessTokenCookie(null)
     globalContextValue.setUsername(null);
 }
 
@@ -312,19 +330,43 @@ export async function createEmptyStore(data : any){
  * @param data 
  * @summary Fetch all stores associated with given vendor
  */
- export async function getStores(data : any){
-    const res = await fetch(`${CONFIG.VikasaAPI}/shop`, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type':'application/json'
-        },
-        body: JSON.stringify(data)
+ export async function getShops(globalContextValue:any) 
+ {
+     console.log('Fetching Shops...');
+
+    //check if any access token stored.
+    var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
+    var parsedAccessTokenCookie = null;
+    if(storedAccessTokenCookie != null)
+        parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
+    
+    console.log(`parsed AccessToken : ${parsedAccessTokenCookie}`)
+
+    const header = new Headers({
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
     });
-    console.log(res);
+
+    if(parsedAccessTokenCookie)
+    {
+        var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
+        header.append('Cookie', stringifiedCookie)
+    }
+
+    const res = await fetch(`${CONFIG.VikasaAPI}/shop?vendorId=${globalContextValue.username}`, {
+        method: 'GET',
+        headers: header
+    }).catch(err=>{
+        console.log('Failed to fetchh shop ', err);
+    });
+    if(!res)
+        throw new Error('Network error.');
+
+    const responseJSON = await res.json();
+    console.log('Shop Fetch Complete');
     if(res.status != 200)
-        throw new Error("Failed to fetch store details")
-    return res;
+        throw new Error("Failed to fetch store details, "+responseJSON)
+    return responseJSON;
 }
 
 /**
