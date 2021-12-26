@@ -14,7 +14,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
-import { createEmptyStore, getShops } from '../../utils/networking';
+import { createEmptyStore, getInventories, getShops } from '../../utils/networking';
 
 const Styles = StyleSheet.create({
     textInputStyle:{
@@ -96,7 +96,36 @@ export default function(props : any){
         }
         getVendorShops();
         return ()=>{toLoad = false}
-    }, [])
+    }, []);
+
+    useEffect(()=>{
+        var toLoad = true;
+        async function getShopInventories() {
+            if(!shopDropdownSelectedValue) 
+                return;
+            let res = await getInventories(shopDropdownSelectedValue).catch(err=>{
+                console.log('failed to fetch inv. ', err);
+            })
+            if(!toLoad)
+                return;
+            if(!res) {
+                setInvDropdownItems([]);
+                return;
+            }
+
+            let resArray = res.data.map((item: { displayName: any; inventoryId: any; }) =>{
+                return {
+                    'label': item.displayName, 
+                    'value': item.inventoryId
+                }
+            });
+
+            console.log('res-array', resArray)
+            setInvDropdownItems(resArray);
+        }
+        getShopInventories();
+        return ()=>{toLoad=false}
+    }, [shopDropdownSelectedValue]);
 
     return (
         <ScrollView nestedScrollEnabled={true} style={{flex:1}}>

@@ -332,7 +332,7 @@ export async function createEmptyStore(data : any){
  */
  export async function getShops(globalContextValue:any) 
  {
-     console.log('Fetching Shops...');
+    console.log('Fetching Shops...');
 
     //check if any access token stored.
     var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
@@ -366,6 +366,45 @@ export async function createEmptyStore(data : any){
     console.log('Shop Fetch Complete');
     if(res.status != 200)
         throw new Error("Failed to fetch store details, "+responseJSON)
+    return responseJSON;
+}
+
+export async function getInventories(storeId:string){
+    console.log('Fetching Inventory...');
+
+    //check if any access token stored.
+    var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
+    var parsedAccessTokenCookie = null;
+    if(storedAccessTokenCookie != null)
+        parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
+
+    const header = new Headers({
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    });
+
+    if(parsedAccessTokenCookie)
+    {
+        var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
+        header.append('Cookie', stringifiedCookie)
+    }
+
+    const res = await fetch(`${CONFIG.VikasaAPI}/shop/${storeId}/inventory`, {
+        method: 'GET',
+        headers: header
+    }).catch(err=>{
+        console.log('Fetch Exception :');
+        console.error(err);
+    });
+    if(!res)
+        throw new Error('Network error.');
+
+    const responseJSON = await res.json();
+    console.log('Inventory Fetch Complete', responseJSON);
+    if(res.status != 200){
+        console.log('response status code is not 200')
+        throw new Error("Failed to fetch Inventory details, "+responseJSON)
+    }
     return responseJSON;
 }
 
