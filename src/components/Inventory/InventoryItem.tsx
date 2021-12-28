@@ -41,7 +41,7 @@ export default function(props: any){
 
                     {/* row-1 */}
                     <View style={{flex:1, flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
-                        {<Text style={{flex:1, padding:5}}>{props.title}</Text>}
+                        {<Text style={{flex:1, padding:5}}>Item : {props.title}</Text>}
                         {<Text style={{flex:1, padding:5}}>Qty: {props.quantity}</Text>}    
                     </View>
 

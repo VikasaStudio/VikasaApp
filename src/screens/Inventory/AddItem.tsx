@@ -14,7 +14,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
-import { createEmptyStore, getInventories, getShops } from '../../utils/networking';
+import { createEmptyStore, createItem, getInventories, getShops } from '../../utils/networking';
 
 const Styles = StyleSheet.create({
     textInputStyle:{
@@ -270,30 +270,24 @@ export default function(props : any){
                 <Button title="Create" onPress={async (e : any)=>{
                     // Create Shop
                     var itemDetail = {
-                        name: itemName,
+                        displayName: itemName,
                         category: itemCategory,
                         variant: itemVariant,
                         quantity: itemQuantity,
-                        price: itemPrice,
+                        pricePerUnit: itemPrice,
                         description: itemDesc,
-                        storeId: null,
-                        inventoryId: null
+                        storeId: shopDropdownSelectedValue,
+                        inventoryId: invDropdownSelectedValue
                     }
                     console.log(itemDetail)
-                    var storeId = null;
                     var isNewShopRequired : boolean = (shopIndex === 1);
                     var isNewInvRequired : boolean = (invIndex === 1);
-                    if(isNewShopRequired){
-                        // create new shop.
-                        storeId = await createEmptyStore({
-                            vendorId: 'keshav',
-                            localDomain: 'www.abc.com',
-                            displayName: 'keshav1',
-                            description: 'test'
-                        }).catch(err=>{console.log(err)});
-                    }
-                    if(isNewInvRequired){
-                        // create new inventory.
+                    if(!isNewShopRequired && !isNewInvRequired) {
+                        var res = await createItem(itemDetail).catch(err=>{console.log('Error while creating item : ', err)});
+                        if(res){
+
+                        }
+                        return;
                     }
                 }}/>
             </View>

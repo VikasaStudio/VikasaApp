@@ -13,6 +13,7 @@ import {
 import { GlobalContext } from '../../context/GlobalContext';
 import styles from '../../styles/GlobalStyle';
 import InventoryItem from '../../components/Inventory/InventoryItem';
+import { getItems } from '../../utils/networking';
 var DATA: readonly any[] | null | undefined = [];
 for(let i=0; i<5; i++){
     DATA = [...DATA, {
@@ -26,14 +27,37 @@ for(let i=0; i<5; i++){
         quantity:i
     }]
 }
-
 export default function() {
     
     const navigation = useNavigation<any>();
     const [selectedItems, setSelectedItems] = useState(new Map<string | number, any>());
+    const [itemList, setItemList] = useState([]);
+
     useEffect(()=>{
         console.log(selectedItems)
     }, [selectedItems])
+
+    //preload items
+    useEffect(()=>{
+        var toLoad = true;
+        async function preloadItemsList() {
+            let res = await getItems('fgdfgdfgd', {});
+            if(!toLoad)
+                return;
+            if(!res) {
+                setItemList([]);
+                return;
+            }
+            
+            let resArray = res.data;
+    
+            console.log('res-array', resArray)
+            setItemList(resArray);
+        }
+        preloadItemsList();
+        return ()=>{toLoad = false}
+    }, []);
+
     return(
         <View style={{
             flex: 1,
@@ -47,28 +71,30 @@ export default function() {
 
             {/* List View */}
             <View style={{flex:8, backgroundColor:'grey'}}>
-                <FlatList data={DATA} renderItem={({ item } :any) => (
-                <InventoryItem 
-                    title={item.title}
-                    quantity={item.quantity} 
-                    price={item.price} 
-                    shopId={item.shopId}
-                    shopName={item.shopName}
-                    inventoryId={item.inventoryId}
-                    inventoryName={item.inventoryName}
+                <FlatList data={itemList} renderItem={({ item } :any) => (
+                    <InventoryItem 
+                        title={item.SellableItemProfile.displayName}
+                        quantity={item.SellableItemProfile.quantity} 
+                        price={item.SellableItemProfile.pricePerUnit}
 
-                    onItemSelect={(e: { title: string | number; })=>{
-                        var currentMap = selectedItems;
-                        currentMap.set(e.title, e)
-                        setSelectedItems(new Map(currentMap))
-                    }}
-                    onItemUnselect={(e:any)=>{
-                        var currentMap = selectedItems;
-                        currentMap.delete(e.title)
-                        setSelectedItems(new Map(currentMap))
-                    }}
-                />
-            )} keyExtractor={item => item.id} />
+                        shopId={item.SellableItemProfile.storeId}
+                        shopName={item.SellableItemProfile.storeId}
+
+                        inventoryId={item.SellableItemProfile.inventoryId}
+                        inventoryName={item.SellableItemProfile.inventoryId}
+
+                        onItemSelect={(e: { title: string | number; })=>{
+                            var currentMap = selectedItems;
+                            currentMap.set(e.title, e)
+                            setSelectedItems(new Map(currentMap))
+                        }}
+                        onItemUnselect={(e:any)=>{
+                            var currentMap = selectedItems;
+                            currentMap.delete(e.title)
+                            setSelectedItems(new Map(currentMap))
+                        }}
+                    /> 
+                )}/>
             </View>
 
             {/* Button Bottom View */}

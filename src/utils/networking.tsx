@@ -432,13 +432,27 @@ export async function createEmptyInventory(data : any){
     }
     return res;
 }
-export async function createItem(data : any) {
+export async function createItem(data: { displayName: any; category: any; variant: any; quantity: any; pricePerUnit: any; description: any; storeId: any; inventoryId: any; itemType?: any; MRP?: any; currency?: any; }) {
+    //check if any access token stored.
+    var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
+    var parsedAccessTokenCookie = null;
+    if(storedAccessTokenCookie != null)
+        parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
+
+    const header = new Headers({
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    });
+
+    if(parsedAccessTokenCookie)
+    {
+        var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
+        header.append('Cookie', stringifiedCookie)
+    }
+
     const res = await fetch(`${CONFIG.VikasaAPI}/shop/inventory/item`, {
         method: 'POST',
-        headers:{
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-        },
+        headers: header,
         body: JSON.stringify({
             itemType: data.itemType || 'sellable',
             inventoryId: data.inventoryId,
@@ -453,11 +467,11 @@ export async function createItem(data : any) {
             currency: data.currency || 'INR'
         })
     });
-    console.log(res);
-    if(res.status != 200){
+    var resJSON = await res.json();
+    if(res.status != 201){
         throw new Error("Item could not be created.");
     }
-    return res;
+    return resJSON;
 }
 
 /**
@@ -571,13 +585,47 @@ export async function fetchInventory(vendorId:string, shopId:string, offset: num
         return res;
     return [];
 }
-export async function addShopItems(){
-
-}
 export async function createInventory() {
     
 }
+export async function getItems(storeId : string, filter:any){
+    console.log('Fetching Items...');
 
+    //check if any access token stored.
+    var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
+    var parsedAccessTokenCookie = null;
+    if(storedAccessTokenCookie != null)
+        parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
+
+    const header = new Headers({
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    });
+
+    if(parsedAccessTokenCookie)
+    {
+        var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
+        header.append('Cookie', stringifiedCookie)
+    }
+
+    const res = await fetch(`${CONFIG.VikasaAPI}/shop/${storeId}/inventory/items`, {
+        method: 'GET',
+        headers: header
+    }).catch(err=>{
+        console.log('Fetch Exception :');
+        console.error(err);
+    });
+    if(!res)
+        throw new Error('Network error.');
+
+    const responseJSON = await res.json();
+    console.log('Item Fetch Complete', responseJSON);
+    if(res.status != 200){
+        console.log('response status code is not 200')
+        throw new Error("Failed to fetch Item details, "+responseJSON)
+    }
+    return responseJSON;
+}
 //-------------- Orders CRUD
 export async function fetchOrders(offset: number, limit:number){
     const res = await fetch(`${CONFIG.VikasaAPI}/shop/order`, {
