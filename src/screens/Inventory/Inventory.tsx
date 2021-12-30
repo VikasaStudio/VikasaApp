@@ -14,6 +14,7 @@ import { GlobalContext } from '../../context/GlobalContext';
 import styles from '../../styles/GlobalStyle';
 import InventoryItem from '../../components/Inventory/InventoryItem';
 import { getItems } from '../../utils/networking';
+import ToggableViewContainer from '../../components/ToggableViewContainer';
 var DATA: readonly any[] | null | undefined = [];
 for(let i=0; i<5; i++){
     DATA = [...DATA, {
@@ -51,28 +52,23 @@ export default function() {
             
             let resArray = res.data;
     
-            console.log('res-array', resArray)
             setItemList(resArray);
         }
         preloadItemsList();
         return ()=>{toLoad = false}
     }, []);
-
+    
     return(
         <View style={{
             flex: 1,
             flexDirection: 'column',
             backgroundColor: "#1A1A22"
         }}>
-            {/* Filter/Search Container View */}
-            <View style={{height:80,justifyContent:'center', alignItems: 'center', backgroundColor:'lime'}}>
-                <Text>Inventory Search Options Here</Text>
-            </View>
-
             {/* List View */}
             <View style={{flex:8, backgroundColor:'grey'}}>
                 <FlatList data={itemList} renderItem={({ item } :any) => (
-                    <InventoryItem 
+                    <InventoryItem
+                        itemId = {item.itemId}
                         title={item.SellableItemProfile.displayName}
                         quantity={item.SellableItemProfile.quantity} 
                         price={item.SellableItemProfile.pricePerUnit}
@@ -83,18 +79,18 @@ export default function() {
                         inventoryId={item.SellableItemProfile.inventoryId}
                         inventoryName={item.SellableItemProfile.inventoryId}
 
-                        onItemSelect={(e: { title: string | number; })=>{
+                        onItemSelect={(e: { itemId: string; })=>{
                             var currentMap = selectedItems;
-                            currentMap.set(e.title, e)
+                            currentMap.set(e.itemId, e)
                             setSelectedItems(new Map(currentMap))
                         }}
                         onItemUnselect={(e:any)=>{
                             var currentMap = selectedItems;
-                            currentMap.delete(e.title)
+                            currentMap.delete(e.itemId)
                             setSelectedItems(new Map(currentMap))
                         }}
                     /> 
-                )}/>
+                )} keyExtractor={(item:any)=>item.itemId}/>
             </View>
 
             {/* Button Bottom View */}
@@ -111,11 +107,15 @@ export default function() {
                         }}></Button>
                     </View>
                     <View style={{flex:1, margin:5}}>
-                        <Button title="Unselect All" onPress={()=>{
-                            selectedItems.forEach( (v, k)=>{
-                                v.setChecked(false);
-                            })
-                        }}></Button>
+                        <ToggableViewContainer index={selectedItems.size > 0 ? 0 : 1}>
+                            <Button title="Unselect All" onPress={()=>{
+                                selectedItems.forEach( (v, k)=>{
+                                    v.setChecked(false);
+                                })
+                            }}/>
+                            <Button title="Select All" onPress={()=>{
+                            }}/>
+                        </ToggableViewContainer>
                     </View>
                 </View>
             </View>

@@ -29,6 +29,7 @@ import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import Inventory from './src/screens/Inventory/Inventory';
 import CreateInventory from './src/screens/Inventory/AddItem';
 import Menu from './src/screens/Menu';
+import { Button } from 'react-native';
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 
@@ -75,10 +76,17 @@ function OrderNavigator(props: any){
 function InventoryNavigator(props : any){
   return (
     <Stack.Navigator initialRouteName={CONFIG.Screens.Inventory.name}>
-      <Stack.Screen name={CONFIG.Screens.Inventory.name} component={gestureHandlerRootHOC(Inventory)} options={{
-        headerTitle:'My Inventory'
+      <Stack.Screen name={CONFIG.Screens.Inventory.name} component={CONFIG.Screens.Inventory.component} options={{
+        headerTitle:'My Inventory',
+        headerRight: ()=>{
+          return <Button onPress={() => {
+            console.log('filter record')
+          }}
+            title="Info"
+            color="red" />;
+        }
       }}/>
-      <Stack.Screen name={CONFIG.Screens.AddItem.name} component={gestureHandlerRootHOC(CreateInventory)} options={{
+      <Stack.Screen name={CONFIG.Screens.AddItem.name} component={CONFIG.Screens.AddItem.component} options={{
         headerTitle:'Add Item'
       }}/>
     </Stack.Navigator>
@@ -94,10 +102,10 @@ export default function App() {
               return (
                 <NavigationContainer>
                   <Stack.Navigator initialRouteName={CONFIG.Screens.Dashboard.name}>
-                    <Stack.Screen name={CONFIG.Screens.Dashboard.name} component={gestureHandlerRootHOC(Dashboard)} options={{
+                    <Stack.Screen name={CONFIG.Screens.Dashboard.name} component={CONFIG.Screens.Dashboard.component} options={{
                       headerShown:false
                     }}/>
-                    <Stack.Screen name={CONFIG.Screens.ProfileMenu.name} component={gestureHandlerRootHOC(Menu)} options={{
+                    <Stack.Screen name={CONFIG.Screens.ProfileMenu.name} component={CONFIG.Screens.ProfileMenu.component} options={{
                       headerShown:false
                     }}/>
                     <Stack.Screen name={CONFIG.Screens.OrderDashboard.name} component={gestureHandlerRootHOC(OrderNavigator)} options={{
@@ -114,7 +122,7 @@ export default function App() {
             return (
               <NavigationContainer>
                 <Stack.Navigator initialRouteName={CONFIG.Screens.Auth.name}>
-                  <Stack.Screen name={CONFIG.Screens.Auth.name} component={gestureHandlerRootHOC(AuthScreen)} options={{
+                  <Stack.Screen name={CONFIG.Screens.Auth.name} component={CONFIG.Screens.Auth.component} options={{
                       headerShown:false
                     }}/>
                 </Stack.Navigator>

@@ -32,7 +32,6 @@ export default function(props: any){
             props.onItemUnselect({...props, setChecked});
         }   
     }, [isChecked]);
-
     return (
         <TouchableOpacity onPress={props.onPress}>
             <View style={{flex:1, flexDirection:'row'}}>
