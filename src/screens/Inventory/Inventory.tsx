@@ -2,37 +2,21 @@ import { useNavigation } from '@react-navigation/native';
 import React, {useContext, useEffect, useState} from 'react';
 import CONFIG from '../../utils/config'
 import {
-    Text,
-    TextInput,
-    useColorScheme,
-    TouchableOpacity,
     View,
     FlatList,
     Button
   } from 'react-native';
-import { GlobalContext } from '../../context/GlobalContext';
-import styles from '../../styles/GlobalStyle';
 import InventoryItem from '../../components/Inventory/InventoryItem';
 import { getItems } from '../../utils/networking';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
-var DATA: readonly any[] | null | undefined = [];
-for(let i=0; i<5; i++){
-    DATA = [...DATA, {
-        id: i, 
-        title:`item ${i}`, 
-        inventoryName: 'inv', 
-        inventoryId: i,
-        shopName: 'myShop', 
-        shopId:i, 
-        price:100, 
-        quantity:i
-    }]
-}
+
 export default function() {
     
     const navigation = useNavigation<any>();
-    const [selectedItems, setSelectedItems] = useState(new Map<string | number, any>());
-    const [itemList, setItemList] = useState([]);
+    const [selectedItems, setSelectedItems] = useState(new Map<string, any>());
+
+    const [rawItemData, setRawItemData] = useState([]);
+    const [itemSetCheckedHandler, setItemSetCheckedHandler] = useState(new Map<string, any>());
 
     useEffect(()=>{
 
@@ -46,13 +30,12 @@ export default function() {
             if(!toLoad)
                 return;
             if(!res) {
-                setItemList([]);
+                setRawItemData([]);
                 return;
             }
             
             let resArray = res.data;
-    
-            setItemList(resArray);
+            setRawItemData(resArray);
         }
         preloadItemsList();
         return ()=>{toLoad = false}
@@ -66,8 +49,22 @@ export default function() {
         }}>
             {/* List View */}
             <View style={{flex:8, backgroundColor:'grey'}}>
-                <FlatList data={itemList} renderItem={({ item } :any) => (
+                <FlatList data={rawItemData} renderItem={({ item } :any) => (
                     <InventoryItem
+                        //store this instance in a state as well, so as to fetch it back
+                        onItemInitialize={(item:any)=>{
+                            if(!item) return;
+                            var d = itemSetCheckedHandler;
+                            d.set(item.itemId, item.setChecked);
+                            setItemSetCheckedHandler(new Map<string, any>(d));
+                        }}
+                        onItemDelete={(item:any)=>{
+                            if(!item) return;
+                            var d = itemSetCheckedHandler;
+                            d.delete(item.itemId);
+                            setItemSetCheckedHandler(new Map<string, any>(d));
+                        }}
+
                         itemId = {item.itemId}
                         title={item.SellableItemProfile.displayName}
                         quantity={item.SellableItemProfile.quantity} 
@@ -117,6 +114,9 @@ export default function() {
                                 })
                             }}/>
                             <Button title="Select All" onPress={()=>{
+                                itemSetCheckedHandler.forEach( (setChecked)=>{
+                                    setChecked(true);
+                                })
                             }}/>
                         </ToggableViewContainer>
                     </View>
