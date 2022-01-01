@@ -35,7 +35,7 @@ export default function() {
     const [itemList, setItemList] = useState([]);
 
     useEffect(()=>{
-        console.log(selectedItems)
+
     }, [selectedItems])
 
     //preload items
@@ -101,11 +101,14 @@ export default function() {
                             navigation.navigate({name: CONFIG.Screens.AddItem.name});
                         }}/>
                     </View>
-                    <View style={{flex:1, margin:5}}>
-                        <Button title="Delete" onPress={()=>{
-                            console.log('delete selected item')
-                        }}></Button>
-                    </View>
+                    <ToggableViewContainer index={selectedItems.size > 0 ? 0 : 1}>
+                        <View style={{flex:1, margin:5}}>
+                                <Button title="Delete" onPress={()=>{
+                                    console.log('delete selected item')
+                                }}></Button>
+                        </View>
+                        <></>
+                    </ToggableViewContainer>
                     <View style={{flex:1, margin:5}}>
                         <ToggableViewContainer index={selectedItems.size > 0 ? 0 : 1}>
                             <Button title="Unselect All" onPress={()=>{
