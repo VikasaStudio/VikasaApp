@@ -143,7 +143,6 @@ export async function AttemptLocalLogin(username:string, password:string, global
     if(parsedAccessTokenCookie)
     {
         var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
-        console.log('stringify cookie = ',stringifiedCookie)
         header.append('Cookie', stringifiedCookie)
     }
     const res = await fetch(`${CONFIG.VikasaAPI}/auth/vendor/login`, {
@@ -157,11 +156,9 @@ export async function AttemptLocalLogin(username:string, password:string, global
         })
     });
     const responseJSON = await res.json();
-    console.log(responseJSON);
     // Either user was already logged in or this is a new login.
     if(res.status == 200) {
         const cookies = getParsedCookiesMap(res);
-        console.log(`Cookie Map : `, cookies);
 
         //no need to persist cookie, existing cookies are valid.
         if(cookies.size === 0){
@@ -319,7 +316,6 @@ export async function createEmptyStore(data : any){
             imagesUrl: data.imagesUrl || null
         })
     });
-    console.log(res);
     if(res.status != 200)
         throw new Error("Failed to create empty store")
     return res;
@@ -400,7 +396,6 @@ export async function getInventories(storeId:string){
         throw new Error('Network error.');
 
     const responseJSON = await res.json();
-    console.log('Inventory Fetch Complete', responseJSON);
     if(res.status != 200){
         console.log('response status code is not 200')
         throw new Error("Failed to fetch Inventory details, "+responseJSON)
@@ -426,7 +421,6 @@ export async function createEmptyInventory(data : any){
             inventoryName: data.inventoryName
         })
     });
-    console.log(res);
     if(res.status != 200){
         throw new Error("Inventory could not be created");
     }
@@ -474,6 +468,43 @@ export async function createItem(data: { displayName: any; category: any; varian
     return resJSON;
 }
 
+export async function deleteItem(data : any){
+    console.log('Deleting Item...');
+
+    //check if any access token stored.
+    var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
+    var parsedAccessTokenCookie = null;
+    if(storedAccessTokenCookie != null)
+        parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
+
+    const header = new Headers({
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    });
+
+    if(parsedAccessTokenCookie)
+    {
+        var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
+        header.append('Cookie', stringifiedCookie)
+    }
+
+    const res = await fetch(`${CONFIG.VikasaAPI}/shop/inventory/item`, {
+        method: 'DELETE',
+        headers: header,
+        body: JSON.stringify({
+            itemId: data.itemId,
+            inventoryId: data.inventoryId,
+            storeId: data.storeId,
+            vendorId: data.vendorId
+        })
+    });
+    var resJSON = await res.json();
+    console.log(resJSON)
+    if(res.status != 200){
+        throw new Error("Item could not be deleted or does not exist.");
+    }
+    return resJSON;
+}
 /**
  * 
  * @param mobileNumber 
@@ -494,7 +525,6 @@ export async function createItem(data: { displayName: any; category: any; varian
                 })
             });
             
-            console.log(res.status);
             if(res.status == 200)
                 return resolve('OTP Successfully Sent.');
             return reject('Unable to generate OTP, Try Again');
@@ -527,8 +557,6 @@ export async function verifyOTP(key : string, otp : string){
                     "otp":otp
                 })
             });
-    
-            console.log(res.status);
             if(res.status == 200)
                 return resolve('OTP Verified Successfully.');
             reject('OTP Verification Failed.');
@@ -580,7 +608,6 @@ export async function fetchInventory(vendorId:string, shopId:string, offset: num
             'Content-Type':'application/json'
         }
     });
-    console.log('Inventory Data Fetch: ',res);
     if(res.status == 201 || res.status == 200)
         return res;
     return [];
@@ -588,7 +615,7 @@ export async function fetchInventory(vendorId:string, shopId:string, offset: num
 export async function createInventory() {
     
 }
-export async function getItems(storeId : string, filter:any){
+export async function getItems(filter:any){
     console.log('Fetching Items...');
 
     //check if any access token stored.
@@ -608,7 +635,13 @@ export async function getItems(storeId : string, filter:any){
         header.append('Cookie', stringifiedCookie)
     }
 
-    const res = await fetch(`${CONFIG.VikasaAPI}/shop/${storeId}/inventory/items`, {
+    var url = `${CONFIG.VikasaAPI}/shop/${filter.storeId}/inventory/items`
+    if(filter.offset != null){
+        url=`${url}?offset=${filter.offset}`
+    }
+    if(filter.limit != null)
+        url=`${url}&limit=${filter.limit}`
+    const res = await fetch(url, {
         method: 'GET',
         headers: header
     }).catch(err=>{
@@ -619,7 +652,6 @@ export async function getItems(storeId : string, filter:any){
         throw new Error('Network error.');
 
     const responseJSON = await res.json();
-    console.log('Item Fetch Complete', responseJSON);
     if(res.status != 200){
         console.log('response status code is not 200')
         throw new Error("Failed to fetch Item details, "+responseJSON)
@@ -627,16 +659,38 @@ export async function getItems(storeId : string, filter:any){
     return responseJSON;
 }
 //-------------- Orders CRUD
-export async function fetchOrders(offset: number, limit:number){
-    const res = await fetch(`${CONFIG.VikasaAPI}/shop/order`, {
-        method:'GET',
-        headers:{
-            Accept:'application/json',
-            'Content-Type':'application/json'
-        }
+export async function fetchOrders(filter: { vendorId: string; storeId: string; orderState: string; }, offset: number | null, limit:number | null){
+    console.log('Fetching Orders...');
+
+    //check if any access token stored.
+    var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
+    var parsedAccessTokenCookie = null;
+    if(storedAccessTokenCookie != null)
+        parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
+
+    const header = new Headers({
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
     });
-    console.log('Order Data Fetch : ', res);
+
+    if(parsedAccessTokenCookie)
+    {
+        var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
+        header.append('Cookie', stringifiedCookie)
+    }
+
+    var url = `${CONFIG.VikasaAPI}/shop/order?vendorId=${filter.vendorId}`;
+    if(filter.storeId)
+        url+=`&storeId=${filter.storeId}`;
+    if(filter.orderState)
+        url+=`&orderState=${filter.orderState}`
+
+    const res = await fetch(url, {
+        method:'GET',
+        headers:header
+    });
+    const responseJSON = await res.json();
     if(res.status == 201 || res.status == 200)
-        return res;
+        return responseJSON;
     return [];
 }

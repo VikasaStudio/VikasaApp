@@ -4,29 +4,43 @@ import CONFIG from '../../utils/config'
 import {
     View,
     FlatList,
-    Button
+    Button,
+    ActivityIndicator
   } from 'react-native';
 import InventoryItem from '../../components/Inventory/InventoryItem';
-import { getItems } from '../../utils/networking';
+import { deleteItem, getItems } from '../../utils/networking';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
+import { GlobalContext } from '../../context/GlobalContext';
 
 export default function() {
     
     const navigation = useNavigation<any>();
+    const globalContextValue = useContext(GlobalContext);
     const [selectedItems, setSelectedItems] = useState(new Map<string, any>());
 
     const [rawItemData, setRawItemData] = useState([]);
     const [itemSetCheckedHandler, setItemSetCheckedHandler] = useState(new Map<string, any>());
 
-    useEffect(()=>{
+    const [isLoading, setLoading] = useState(false);
 
+    const [dataLoadTrigger, setDataLoadTrigger] = useState(false);
+
+    useEffect(()=>{
     }, [selectedItems])
 
     //preload items
     useEffect(()=>{
         var toLoad = true;
         async function preloadItemsList() {
-            let res = await getItems('fgdfgdfgd', {});
+            setLoading(true);
+
+            //clear existing load content
+            setRawItemData([])
+            setSelectedItems(new Map<string, any>());
+            setItemSetCheckedHandler(new Map<string, any>());
+
+            let res = await getItems({storeId:'fgdfgdfgd', offset:0, limit:55});
+            setLoading(false);
             if(!toLoad)
                 return;
             if(!res) {
@@ -39,7 +53,7 @@ export default function() {
         }
         preloadItemsList();
         return ()=>{toLoad = false}
-    }, []);
+    }, [dataLoadTrigger]);
     
     return(
         <View style={{
@@ -87,7 +101,19 @@ export default function() {
                             setSelectedItems(new Map(currentMap))
                         }}
                     /> 
-                )} keyExtractor={(item:any)=>item.itemId}/>
+                )}
+                    keyExtractor={(item:any)=>item.itemId} 
+                    onEndReachedThreshold={-1} 
+                    onEndReached={(info : any)=>{
+                    console.log('reached end', info);
+                }} />
+                <ToggableViewContainer index={isLoading ? 0 : 1}>
+                    <View style={{backgroundColor: 'transparent'}}>
+                        <ActivityIndicator size="large" 
+                        style={{padding:10, backgroundColor: 'transparent'}} />
+                    </View>
+                    <></>
+                </ToggableViewContainer>
             </View>
 
             {/* Button Bottom View */}
@@ -100,8 +126,20 @@ export default function() {
                     </View>
                     <ToggableViewContainer index={selectedItems.size > 0 ? 0 : 1}>
                         <View style={{flex:1, margin:5}}>
-                                <Button title="Delete" onPress={()=>{
-                                    console.log('delete selected item')
+                                <Button title="Delete" onPress={async ()=>{
+
+                                    selectedItems.forEach( async (item:any, itemId:string)=>{
+                                        let res = await deleteItem({
+                                            storeId: item.shopId,
+                                            itemId: item.itemId,
+                                            inventoryId: item.inventoryId,
+                                            vendorId: globalContextValue.username
+                                        }).catch(err=>{console.log('err',err)});
+                                        
+                                        if(res){
+                                            setDataLoadTrigger(!dataLoadTrigger);
+                                        }
+                                    });
                                 }}></Button>
                         </View>
                         <></>
