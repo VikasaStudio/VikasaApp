@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { getItems } from "../utils/networking";
+import { useContext, useEffect, useState } from "react";
+import { getItems, deleteItem as DeleteItem} from "../utils/networking";
+import { GlobalContext } from '../context/GlobalContext';
 
 //fetch items for store / inventory.
 export function useFetchedInventoryItems(initialVal : Map<string,any>, initialFilter : any | null)
@@ -12,6 +13,7 @@ export function useFetchedInventoryItems(initialVal : Map<string,any>, initialFi
 
     //whether new data needs to be appended or overwrriten
     const [isAppended, setDataAppended] = useState(true);
+    const globalContextValue = useContext(GlobalContext);
     
     //filters
     if(initialFilter == null){
@@ -55,9 +57,28 @@ export function useFetchedInventoryItems(initialVal : Map<string,any>, initialFi
 
     }, [offset, limit]);
 
+    useEffect(()=>{
+        var selection = selectedItems;
+        var updateRequired = false;
+
+        console.log('some item deleted/added ');
+
+        selection.forEach( (itemId)=>{
+            if(!items.has(itemId)){
+                updateRequired = true;
+                console.log('Updating Selection Set');
+                selection.delete(itemId);
+            }
+        });
+        
+        setSelectedItems(new Set<string>(selection));
+    }, [items])
+
     // API Functions to interact with containers
     function selectItem(itemId:string) {
+        console.log('select item : ' + itemId);
         if(items.has(itemId)){
+            console.log('selecting ', itemId)
             setSelectedItems( (oldState) => {
                 return new Set<string>([...oldState, itemId])
             });
@@ -74,9 +95,27 @@ export function useFetchedInventoryItems(initialVal : Map<string,any>, initialFi
             dup.delete(itemId);
         setSelectedItems(new Set<string>(dup));
     }
-    function deleteItem(itemId:string) {
+    async function deleteItem(data: { itemId: string; inventoryId: string; storeId: string; vendorId: string; }) {
+        var dup = items;
 
+        console.log('Tried to delete ',items)
+        if(dup.has(data.itemId))
+        {
+            let res = await DeleteItem({
+                itemId: data.itemId,
+                inventoryId: data.inventoryId,
+                storeId: data.storeId,
+                vendorId: data.vendorId
+            }).catch(err=>{console.log(err)});
+
+            console.log('Tried Deleting , res = ', res)
+            if(!res)
+                return false;
+            dup.delete(data.itemId);
+        }
+        setItems(new Map<string, any>(dup));
+        return true;
     }
 
-    return {items, selectedItems, unselectItem, selectItem}
+    return {items, selectedItems, unselectItem, selectItem, deleteItem}
 }

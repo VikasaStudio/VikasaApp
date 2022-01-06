@@ -499,7 +499,9 @@ export async function deleteItem(data : any){
         })
     });
     var resJSON = await res.json();
+
     console.log(resJSON)
+
     if(res.status != 200){
         throw new Error("Item could not be deleted or does not exist.");
     }

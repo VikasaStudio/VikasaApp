@@ -8,7 +8,6 @@ import {
     ActivityIndicator
   } from 'react-native';
 import InventoryItem from '../../components/Inventory/InventoryItem';
-import { deleteItem, getItems } from '../../utils/networking';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
 import { GlobalContext } from '../../context/GlobalContext';
 import { useFetchedInventoryItems } from '../../hooks/useFetchedInventoryItems';
@@ -16,14 +15,9 @@ export default function() {
     
     const navigation = useNavigation<any>();
     const globalContextValue = useContext(GlobalContext);
-
-    //selected/unselected handler
-    const [itemSetCheckedHandler, setItemSetCheckedHandler] = useState(new Map<string, any>());
-
     const [isLoading, setLoading] = useState(false);
 
-    const [dataLoadTrigger, setDataLoadTrigger] = useState(false);
-    const {items, selectedItems, selectItem, unselectItem} = useFetchedInventoryItems(new Map<string, any>(), {storeId: 'fgdfgdfgd'});
+    const {items, selectedItems, selectItem, unselectItem, deleteItem} = useFetchedInventoryItems(new Map<string, any>(), {storeId: 'fgdfgdfgd'});
     
     return(
         <View style={{
@@ -47,7 +41,8 @@ export default function() {
                         inventoryId={item.SellableItemProfile.inventoryId}
                         inventoryName={item.SellableItemProfile.inventoryId}
 
-                        setChecked={item.setChecked}
+                        setChecked={selectItem}
+                        setUnchecked={unselectItem}
                         selectedItems={selectedItems}
 
                         onItemSelect={(e: { itemId: string; })=>{
@@ -83,18 +78,10 @@ export default function() {
                     <ToggableViewContainer index={selectedItems.size > 0 ? 0 : 1}>
                         <View style={{flex:1, margin:5}}>
                                 <Button title="Delete" onPress={async ()=>{
-
-                                    selectedItems.forEach( async (item:any, itemId:string)=>{
-                                        let res = await deleteItem({
-                                            storeId: item.shopId,
-                                            itemId: item.itemId,
-                                            inventoryId: item.inventoryId,
-                                            vendorId: globalContextValue.username
-                                        }).catch(err=>{console.log('err',err)});
-                                        
-                                        if(res){
-                                            setDataLoadTrigger(!dataLoadTrigger);
-                                        }
+                                    var dup = selectedItems;
+                                    dup.forEach( async (item:any, itemId:string)=>{
+                                        let deleted = await deleteItem(item)
+                                        console.log('result = ',deleted)
                                     });
                                 }}></Button>
                         </View>

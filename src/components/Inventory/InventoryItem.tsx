@@ -24,12 +24,11 @@ const styles = StyleSheet.create({
 })
 export default function(props: any) {
     const [isSelected, setSelected] = useState(props.selectedItems.has(props.itemId) || false);
-
     useEffect(()=>{
-        if(false && props.onItemSelect){
+        if(isSelected && props.onItemSelect){
             props.onItemSelect(props);
         }
-        else if(false && props.onItemUnselect){
+        else if(!isSelected && props.onItemUnselect){
             props.onItemUnselect(props);
         }
     }, []);
@@ -63,8 +62,10 @@ export default function(props: any) {
                         style={{flex: 1, padding: 10}}
                         
                         onClick={()=>{
-                            if(props.setChecked)
-                                props.setChecked(!isSelected);
+                            if(!isSelected)
+                                props.setChecked(props.itemId)
+                            else 
+                                props.setUnchecked(props.itemId)
                         }}
 
                         isChecked={isSelected}
