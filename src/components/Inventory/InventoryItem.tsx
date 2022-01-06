@@ -22,21 +22,21 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around'
     }
 })
-export default function(props: any){
-    const [isChecked, setChecked] = useState(false);
-    useEffect(()=>{
-        if(isChecked && props.onItemSelect){
-            props.onItemSelect({...props, setChecked});
-        }
-        else if(!isChecked && props.onItemUnselect){
-            props.onItemUnselect({...props, setChecked});
-        }   
-    }, [isChecked]);
+export default function(props: any) {
+    const [isSelected, setSelected] = useState(props.selectedItems.has(props.itemId) || false);
 
     useEffect(()=>{
-        if(props.onItemInitialize)
-            props.onItemInitialize({...props, setChecked});
+        if(false && props.onItemSelect){
+            props.onItemSelect(props);
+        }
+        else if(false && props.onItemUnselect){
+            props.onItemUnselect(props);
+        }
     }, []);
+
+    useEffect(()=>{
+        setSelected(props.selectedItems.has(props.itemId))
+    }, [props.selectedItems]);
 
     return (
         <TouchableOpacity onPress={props.onPress}>
@@ -61,10 +61,13 @@ export default function(props: any){
                 <View style={styles.cell}>
                     <CheckBox
                         style={{flex: 1, padding: 10}}
+                        
                         onClick={()=>{
-                            setChecked(!isChecked);
+                            if(props.setChecked)
+                                props.setChecked(!isSelected);
                         }}
-                        isChecked={isChecked}
+
+                        isChecked={isSelected}
                         leftText={"CheckBox"}
                     />
                 </View>

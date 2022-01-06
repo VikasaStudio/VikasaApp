@@ -641,6 +641,7 @@ export async function getItems(filter:any){
     }
     if(filter.limit != null)
         url=`${url}&limit=${filter.limit}`
+    console.log('-url-', url);
     const res = await fetch(url, {
         method: 'GET',
         headers: header
@@ -652,6 +653,7 @@ export async function getItems(filter:any){
         throw new Error('Network error.');
 
     const responseJSON = await res.json();
+
     if(res.status != 200){
         console.log('response status code is not 200')
         throw new Error("Failed to fetch Item details, "+responseJSON)

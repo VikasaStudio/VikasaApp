@@ -11,49 +11,19 @@ import InventoryItem from '../../components/Inventory/InventoryItem';
 import { deleteItem, getItems } from '../../utils/networking';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
 import { GlobalContext } from '../../context/GlobalContext';
-
+import { useFetchedInventoryItems } from '../../hooks/useFetchedInventoryItems';
 export default function() {
     
     const navigation = useNavigation<any>();
     const globalContextValue = useContext(GlobalContext);
-    const [selectedItems, setSelectedItems] = useState(new Map<string, any>());
 
-    const [rawItemData, setRawItemData] = useState([]);
+    //selected/unselected handler
     const [itemSetCheckedHandler, setItemSetCheckedHandler] = useState(new Map<string, any>());
 
     const [isLoading, setLoading] = useState(false);
 
     const [dataLoadTrigger, setDataLoadTrigger] = useState(false);
-
-    useEffect(()=>{
-    }, [selectedItems])
-
-    //preload items
-    useEffect(()=>{
-        var toLoad = true;
-        async function preloadItemsList() {
-            setLoading(true);
-
-            //clear existing load content
-            setRawItemData([])
-            setSelectedItems(new Map<string, any>());
-            setItemSetCheckedHandler(new Map<string, any>());
-
-            let res = await getItems({storeId:'fgdfgdfgd', offset:0, limit:55});
-            setLoading(false);
-            if(!toLoad)
-                return;
-            if(!res) {
-                setRawItemData([]);
-                return;
-            }
-            
-            let resArray = res.data;
-            setRawItemData(resArray);
-        }
-        preloadItemsList();
-        return ()=>{toLoad = false}
-    }, [dataLoadTrigger]);
+    const {items, selectedItems, selectItem, unselectItem} = useFetchedInventoryItems(new Map<string, any>(), {storeId: 'fgdfgdfgd'});
     
     return(
         <View style={{
@@ -63,21 +33,8 @@ export default function() {
         }}>
             {/* List View */}
             <View style={{flex:8, backgroundColor:'grey'}}>
-                <FlatList data={rawItemData} renderItem={({ item } :any) => (
+                <FlatList data={[...items.values()]} renderItem={({ item } :any) => (
                     <InventoryItem
-                        //store this instance in a state as well, so as to fetch it back
-                        onItemInitialize={(item:any)=>{
-                            if(!item) return;
-                            var d = itemSetCheckedHandler;
-                            d.set(item.itemId, item.setChecked);
-                            setItemSetCheckedHandler(new Map<string, any>(d));
-                        }}
-                        onItemDelete={(item:any)=>{
-                            if(!item) return;
-                            var d = itemSetCheckedHandler;
-                            d.delete(item.itemId);
-                            setItemSetCheckedHandler(new Map<string, any>(d));
-                        }}
 
                         itemId = {item.itemId}
                         title={item.SellableItemProfile.displayName}
@@ -90,15 +47,14 @@ export default function() {
                         inventoryId={item.SellableItemProfile.inventoryId}
                         inventoryName={item.SellableItemProfile.inventoryId}
 
+                        setChecked={item.setChecked}
+                        selectedItems={selectedItems}
+
                         onItemSelect={(e: { itemId: string; })=>{
-                            var currentMap = selectedItems;
-                            currentMap.set(e.itemId, e)
-                            setSelectedItems(new Map(currentMap))
+                            
                         }}
                         onItemUnselect={(e:any)=>{
-                            var currentMap = selectedItems;
-                            currentMap.delete(e.itemId)
-                            setSelectedItems(new Map(currentMap))
+                            
                         }}
                     /> 
                 )}
@@ -147,15 +103,15 @@ export default function() {
                     <View style={{flex:1, margin:5}}>
                         <ToggableViewContainer index={selectedItems.size > 0 ? 0 : 1}>
                             <Button title="Unselect All" onPress={()=>{
-                                selectedItems.forEach( (v, k)=>{
-                                    v.setChecked(false);
-                                })
+                                unselectItem();
                             }}/>
                             <Button title="Select All" onPress={()=>{
-                                itemSetCheckedHandler.forEach( (setChecked)=>{
-                                    setChecked(true);
+                                console.log('select all items');
+                                items.forEach( (item, itemId) => {  
+                                    selectItem(itemId);
                                 })
                             }}/>
+
                         </ToggableViewContainer>
                     </View>
                 </View>
