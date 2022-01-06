@@ -54,7 +54,7 @@ export default function() {
                     /> 
                 )}
                     keyExtractor={(item:any)=>item.itemId} 
-                    onEndReachedThreshold={-1} 
+                    onEndReachedThreshold={0.5} 
                     onEndReached={(info : any)=>{
                     console.log('reached end', info);
                 }} />
@@ -79,9 +79,9 @@ export default function() {
                         <View style={{flex:1, margin:5}}>
                                 <Button title="Delete" onPress={async ()=>{
                                     var dup = selectedItems;
-                                    dup.forEach( async (item:any, itemId:string)=>{
-                                        let deleted = await deleteItem(item)
-                                        console.log('result = ',deleted)
+                                    dup.forEach( async (itemId:any)=>{
+                                        console.log(itemId)
+                                        let deleted = await deleteItem(itemId)
                                     });
                                 }}></Button>
                         </View>

@@ -95,17 +95,21 @@ export function useFetchedInventoryItems(initialVal : Map<string,any>, initialFi
             dup.delete(itemId);
         setSelectedItems(new Set<string>(dup));
     }
-    async function deleteItem(data: { itemId: string; inventoryId: string; storeId: string; vendorId: string; }) {
+    async function deleteItem(itemId:string) {
         var dup = items;
-
-        console.log('Tried to delete ',items)
+        
+        if(!items.has(itemId))
+            return false;
+        var data = items.get(itemId);
         if(dup.has(data.itemId))
         {
+            console.log(data)
+            console.log('item exist in container, delete initiated')
             let res = await DeleteItem({
                 itemId: data.itemId,
                 inventoryId: data.inventoryId,
                 storeId: data.storeId,
-                vendorId: data.vendorId
+                vendorId: globalContextValue.username
             }).catch(err=>{console.log(err)});
 
             console.log('Tried Deleting , res = ', res)
