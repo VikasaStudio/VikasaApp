@@ -1,5 +1,6 @@
 import React, {Fragment, useContext, useState} from 'react';
 import { SwipeListView, SwipeRow} from 'react-native-swipe-list-view';
+import {useFetchedOrders} from '../../hooks/useFetchedOrders';
 import {
     Text,
     TouchableOpacity,
@@ -11,38 +12,7 @@ import Card from '../../components/Card';
 import { GlobalContext } from '../../context/GlobalContext';
 import SellOrderListItem from '../../components/Orders/SellOrderListItem';
 import SellOrderModal from '../../components/Orders/OrderModal';
-import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
-var DATA: readonly any[] | null | undefined = [
-];
 
-for(let i=1; i<10; i++){
-  //console.log(`for loop ${i}, time : ${new Date().getTime()}`);
-  DATA = [...DATA,{
-    id: i,
-    key: i,
-    customerName: 'Keshav '+i,
-    state:'Delhi',
-    address:'AB XYZ',
-    country:'India',
-    email:'sharmakeshav15157@gmail.com',
-    mobile:'00912830'+i,
-    total:'5'+i,
-    items:[
-      {
-        name:'item1', 
-        price:50,  //per unit price
-        quantity:50, 
-        total:2500 //total price
-      },
-      {
-        name:'item1', 
-        price:10, 
-        quantity:150, 
-        total:1500
-      }
-    ]
-  }]
-}
 /* React Native Navigation Custom Headers */
 var HeaderRight = function(){
   return (
@@ -94,9 +64,11 @@ const SwipeRowWrapper = function(props:any){
 }
 
 function renderItem({item} : any){
+  console.log(item)
   return <View><SwipeRowWrapper data={item}/></View>;
 }
 export default function() {
+  var {items, selectedItems, unselectItem, selectItem, deleteItem} = useFetchedOrders(new Map<string, any>(), {storeId: 'buglessbytes'})
   return(
   <View style={{
       flex: 1,
@@ -107,8 +79,7 @@ export default function() {
         <Text>Swipe Left to Reject, Swipe Right to Accept Order</Text>
       </View>
       <SwipeListView 
-        data={DATA}
-        onScroll={(e)=>{console.log('Scroll : ' + new Date().getTime())}}
+        data={[...items.values()]}
         useFlatList = {true}
         renderItem = {renderItem}
         leftOpenValue={75} 

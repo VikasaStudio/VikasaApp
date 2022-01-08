@@ -1,9 +1,8 @@
 import { SetStateAction, useContext, useEffect, useState } from "react";
-import { getItems, deleteItem as DeleteItem} from "../utils/networking";
+import { fetchOrders, deleteItem as DeleteItem} from "../utils/networking";
 import { GlobalContext } from '../context/GlobalContext';
 
-export function useFetchedInventoryItems(initialVal : Map<string,any>, 
-    initialFilter : any | null)
+export function useFetchedOrders(initialVal : Map<string,any>, initialFilter : any | null)
 {
     //dict of fetched items.
     const [items, setItems] = useState(new Map<string, any>(initialVal));
@@ -22,13 +21,17 @@ export function useFetchedInventoryItems(initialVal : Map<string,any>,
 
     const [storeId, setStoreId] = useState((initialFilter && initialFilter.storeId)? initialFilter.storeId:null);
     const [inventoryId, setInventoryId] = useState((initialFilter && initialFilter.inventoryId)? initialFilter.inventoryId:null);
+    const [orderState, setOrderState] = useState((initialFilter && initialFilter.orderState)? initialFilter.orderState :'pending');
+    const [orderType, setOrderType] = useState((initialFilter && initialFilter.orderType) ? initialFilter.orderType:null);
+    
     const [offset, setOffset] = useState((initialFilter && initialFilter.offset)?initialFilter.offset : 0);
     const [limit, setLimit] = useState((initialFilter && initialFilter.limit) ? initialFilter.limit : 50);
 
     useEffect(() => {
         var toLoad = true;
         async function loadData(){
-            let res = await getItems({offset, limit, storeId}).catch(err=>{
+            var vendorId = globalContextValue.username;
+            let res = await fetchOrders({offset, limit, vendorId, storeId, orderState, orderType}).catch(err=>{
                 console.error('Error', err);
             });
             if(!res){

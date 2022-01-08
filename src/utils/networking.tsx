@@ -154,8 +154,11 @@ export async function AttemptLocalLogin(username:string, password:string, global
             "password": password,
             "strategy": "local"
         })
-    });
+    }).catch(err=>{console.log(err)})
+    if(!res)
+        return;
     const responseJSON = await res.json();
+    console.log(responseJSON)
     // Either user was already logged in or this is a new login.
     if(res.status == 200) {
         const cookies = getParsedCookiesMap(res);
@@ -663,7 +666,7 @@ export async function getItems(filter:any){
     return responseJSON;
 }
 //-------------- Orders CRUD
-export async function fetchOrders(filter: { vendorId: string; storeId: string; orderState: string; }, offset: number | null, limit:number | null){
+export async function fetchOrders(filter: { offset: number; limit: number; vendorId: any; storeId: any; orderState: any; orderType: any; }){
     console.log('Fetching Orders...');
 
     //check if any access token stored.
@@ -671,7 +674,8 @@ export async function fetchOrders(filter: { vendorId: string; storeId: string; o
     var parsedAccessTokenCookie = null;
     if(storedAccessTokenCookie != null)
         parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
-
+    filter.offset = filter.offset || 0;
+    filter.limit = filter.limit || 20;
     const header = new Headers({
         'Content-Type': 'application/json', 
         'Accept': 'application/json'
@@ -687,13 +691,17 @@ export async function fetchOrders(filter: { vendorId: string; storeId: string; o
     if(filter.storeId)
         url+=`&storeId=${filter.storeId}`;
     if(filter.orderState)
-        url+=`&orderState=${filter.orderState}`
+        url+=`&orderState=${filter.orderState}`;
+    if(filter.orderType)
+        url+=`&orderType=${filter.orderType}`
 
     const res = await fetch(url, {
         method:'GET',
         headers:header
     });
     const responseJSON = await res.json();
+
+    console.log('orders ', responseJSON)
     if(res.status == 201 || res.status == 200)
         return responseJSON;
     return [];
