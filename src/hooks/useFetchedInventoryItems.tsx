@@ -2,9 +2,11 @@ import { SetStateAction, useContext, useEffect, useState } from "react";
 import { getItems, deleteItem as DeleteItem} from "../utils/networking";
 import { GlobalContext } from '../context/GlobalContext';
 
-export function useFetchedInventoryItems(initialVal : Map<string,any>, 
-    initialFilter : any)
+export function useFetchedInventoryItems(initialVal : Map<string,any>, initialFilter : any)
 {
+    if(!initialVal)
+        initialVal = new Map<string, any>();
+
     //dict of fetched items.
     const [items, setItems] = useState(new Map<string, any>(initialVal));
     
@@ -20,7 +22,7 @@ export function useFetchedInventoryItems(initialVal : Map<string,any>,
 
     }
 
-    const [storeId, setStoreId] = useState((initialFilter && initialFilter.storeId)? initialFilter.storeId:null);
+    const [storeId, setStoreId] = useState((initialFilter && initialFilter.storeId)? initialFilter.storeId:'mystore');
     const [inventoryId, setInventoryId] = useState((initialFilter && initialFilter.inventoryId)? initialFilter.inventoryId:null);
     const [offset, setOffset] = useState((initialFilter && initialFilter.offset)?initialFilter.offset : 0);
     const [limit, setLimit] = useState((initialFilter && initialFilter.limit) ? initialFilter.limit : 50);
@@ -118,5 +120,17 @@ export function useFetchedInventoryItems(initialVal : Map<string,any>,
         return true;
     }
 
-    return {items, selectedItems, unselectItem, selectItem, deleteItem}
+    return {
+        items, 
+        selectedItems, 
+        unselectItem, 
+        selectItem, deleteItem, 
+
+        filter:{
+            setStoreId,
+            setInventoryId,
+            setOffset,
+            setLimit
+        }
+    }
 }

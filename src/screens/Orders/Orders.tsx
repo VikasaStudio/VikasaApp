@@ -64,7 +64,7 @@ const SwipeRowWrapper = function(props:any){
 }
 
 function renderItem({item} : any){
-  console.log(item)
+
   return <View><SwipeRowWrapper data={item}/></View>;
 }
 export default function() {

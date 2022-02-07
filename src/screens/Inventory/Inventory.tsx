@@ -10,15 +10,17 @@ import {
 import InventoryItem from '../../components/Inventory/InventoryItem';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
 import { GlobalContext } from '../../context/GlobalContext';
-import { useFetchedInventoryItems } from '../../hooks/useFetchedInventoryItems';
-export default function() {
+import { InventoryContext } from '../../context/InventoryContext';
+
+export default function(props:any) {
     
     const navigation = useNavigation<any>();
     const globalContextValue = useContext(GlobalContext);
+
     const [isLoading, setLoading] = useState(false);
 
-    const {items, selectedItems, selectItem, unselectItem, deleteItem} = useFetchedInventoryItems(new Map<string, any>(), null);
-    
+    const {items, selectedItems, selectItem, unselectItem, deleteItem, filter} = useContext(InventoryContext);
+
     return(
         <View style={{
             flex: 1,
@@ -27,6 +29,7 @@ export default function() {
         }}>
             {/* List View */}
             <View style={{flex:8, backgroundColor:'grey'}}>
+                
                 <FlatList data={[...items.values()]} renderItem={({ item } :any) => (
                     <InventoryItem
 
@@ -58,6 +61,7 @@ export default function() {
                     onEndReached={(info : any)=>{
                     console.log('reached end', info);
                 }} />
+
                 <ToggableViewContainer index={isLoading ? 0 : 1}>
                     <View style={{backgroundColor: 'transparent'}}>
                         <ActivityIndicator size="large" 
@@ -65,6 +69,7 @@ export default function() {
                     </View>
                     <></>
                 </ToggableViewContainer>
+            
             </View>
 
             {/* Button Bottom View */}
@@ -94,7 +99,7 @@ export default function() {
                             }}/>
                             <Button title="Select All" onPress={()=>{
                                 console.log('select all items');
-                                items.forEach( (item, itemId) => {  
+                                items.forEach( (item: any, itemId: any) => {  
                                     selectItem(itemId);
                                 })
                             }}/>

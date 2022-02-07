@@ -18,18 +18,15 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-import AuthScreen from './src/screens/AuthScreen';
-
 import GlobalContextProvider from './src/context/GlobalContext';
 import { GlobalContext } from './src/context/GlobalContext';
-import Dashboard from './src/screens/Dashboard';
+
 import Orders from './src/screens/Orders/Orders';
-import {HeaderRight} from './src/screens/Orders/Orders';
+
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
-import Inventory from './src/screens/Inventory/Inventory';
-import CreateInventory from './src/screens/Inventory/AddItem';
-import Menu from './src/screens/Menu';
+
 import { Button } from 'react-native';
+import InventoryContextProvider, { InventoryContext } from './src/context/InventoryContext';
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 
@@ -75,21 +72,30 @@ function OrderNavigator(props: any){
 
 function InventoryNavigator(props : any){
   return (
-    <Stack.Navigator initialRouteName={CONFIG.Screens.Inventory.name}>
-      <Stack.Screen name={CONFIG.Screens.Inventory.name} component={CONFIG.Screens.Inventory.component} options={{
-        headerTitle:'My Inventory',
-        headerRight: ()=>{
-          return <Button onPress={() => {
-            console.log('filter record')
-          }}
-            title="Info"
-            color="red" />;
+    <InventoryContextProvider>
+      <InventoryContext.Consumer>
+        {
+          InventoryController => {
+            return(
+              <Stack.Navigator initialRouteName={CONFIG.Screens.Inventory.name}>
+                <Stack.Screen name={CONFIG.Screens.Inventory.name} component={CONFIG.Screens.Inventory.component} initialParams={InventoryController} options={{
+                  headerTitle:'My Inventory',
+                  headerRight: ()=>{
+                    return <Button onPress={() => {
+                      console.log('filter record')
+                    }}
+                    title="Info"
+                    color="red" />;
+                  }}}/>
+                <Stack.Screen name={CONFIG.Screens.AddItem.name} component={CONFIG.Screens.AddItem.component} options={{
+                  headerTitle:'Add Item'
+                }}/>
+              </Stack.Navigator>
+            )
+          }
         }
-      }}/>
-      <Stack.Screen name={CONFIG.Screens.AddItem.name} component={CONFIG.Screens.AddItem.component} options={{
-        headerTitle:'Add Item'
-      }}/>
-    </Stack.Navigator>
+      </InventoryContext.Consumer>
+    </InventoryContextProvider>
   )
 }
 export default function App() {
