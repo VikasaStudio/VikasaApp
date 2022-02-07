@@ -73,28 +73,20 @@ function OrderNavigator(props: any){
 function InventoryNavigator(props : any){
   return (
     <InventoryContextProvider>
-      <InventoryContext.Consumer>
-        {
-          InventoryController => {
-            return(
-              <Stack.Navigator initialRouteName={CONFIG.Screens.Inventory.name}>
-                <Stack.Screen name={CONFIG.Screens.Inventory.name} component={CONFIG.Screens.Inventory.component} initialParams={InventoryController} options={{
-                  headerTitle:'My Inventory',
-                  headerRight: ()=>{
-                    return <Button onPress={() => {
-                      console.log('filter record')
-                    }}
-                    title="Info"
-                    color="red" />;
-                  }}}/>
-                <Stack.Screen name={CONFIG.Screens.AddItem.name} component={CONFIG.Screens.AddItem.component} options={{
-                  headerTitle:'Add Item'
-                }}/>
-              </Stack.Navigator>
-            )
-          }
-        }
-      </InventoryContext.Consumer>
+      <Stack.Navigator initialRouteName={CONFIG.Screens.Inventory.name}>
+        <Stack.Screen name={CONFIG.Screens.Inventory.name} component={CONFIG.Screens.Inventory.component} options={{
+          headerTitle:'My Inventory',
+          headerRight: ()=>{
+            return <Button onPress={() => {
+              console.log('filter record')
+            }}
+            title="Info"
+            color="red" />;
+          }}}/>
+        <Stack.Screen name={CONFIG.Screens.AddItem.name} component={CONFIG.Screens.AddItem.component} options={{
+          headerTitle:'Add Item'
+        }}/>
+      </Stack.Navigator>
     </InventoryContextProvider>
   )
 }
