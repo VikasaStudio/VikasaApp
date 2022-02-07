@@ -22,18 +22,18 @@ export function useFetchedInventoryItems(initialVal : Map<string,any>, initialFi
 
     }
 
-    const [storeId, setStoreId] = useState((initialFilter && initialFilter.storeId)? initialFilter.storeId:'mystore');
+    const [storeId, setStoreId] = useState((initialFilter && initialFilter.storeId)? initialFilter.storeId:null);
     const [inventoryId, setInventoryId] = useState((initialFilter && initialFilter.inventoryId)? initialFilter.inventoryId:null);
     const [offset, setOffset] = useState((initialFilter && initialFilter.offset)?initialFilter.offset : 0);
     const [limit, setLimit] = useState((initialFilter && initialFilter.limit) ? initialFilter.limit : 50);
 
+    // API Call to fetch data, whenever filters are changed
     useEffect(() => {
         var toLoad = true;
-        async function loadData(){
-            if(storeId == null)
-                return;
-
-            let res = await getItems({offset, limit, storeId}).catch(err=>{
+        async function loadData()
+        {
+            console.log('Fetching Data to populate...');
+            let res = await getItems({offset, limit, storeId, inventoryId}).catch(err=>{
                 console.error('Error', err);
             });
             if(!res){
@@ -61,7 +61,7 @@ export function useFetchedInventoryItems(initialVal : Map<string,any>, initialFi
             toLoad = false;
         }
 
-    }, [offset, limit]);
+    }, [offset, limit, storeId, inventoryId]);
 
     useEffect(()=>{
         var selection = selectedItems;
@@ -79,7 +79,10 @@ export function useFetchedInventoryItems(initialVal : Map<string,any>, initialFi
         setSelectedItems(new Set<string>(selection));
     }, [items])
 
-    
+    useEffect(()=>{
+        console.log(inventoryId+' and shop : '+storeId);
+    })
+
     function selectItem(itemId:string) {
         if(items.has(itemId)){
             setSelectedItems( (oldState) => {

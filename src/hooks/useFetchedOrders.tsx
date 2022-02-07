@@ -4,6 +4,9 @@ import { GlobalContext } from '../context/GlobalContext';
 
 export function useFetchedOrders(initialVal : Map<string,any>, initialFilter : any | null)
 {
+    if(!initialVal)
+        initialVal = new Map<string, any>();
+
     //dict of fetched items.
     const [items, setItems] = useState(new Map<string, any>(initialVal));
     

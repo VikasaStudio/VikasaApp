@@ -621,7 +621,7 @@ export async function createInventory() {
     
 }
 export async function getItems(filter:any){
-    console.log('Fetching Items...');
+    console.log('Network Call : getItems with filters : ', filter);
 
     //check if any access token stored.
     var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
@@ -639,7 +639,11 @@ export async function getItems(filter:any){
         var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
         header.append('Cookie', stringifiedCookie)
     }
-
+    
+    if(!filter.storeId){
+        console.log('[Networking] - getItems : Request not initiated since storeId is missing/null in filter.')
+        return;
+    }
     var url = `${CONFIG.VikasaAPI}/shop/${filter.storeId}/inventory/items`
     if(filter.offset != null){
         url=`${url}?offset=${filter.offset}`
