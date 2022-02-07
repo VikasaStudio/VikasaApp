@@ -38,7 +38,7 @@ export default function(props: any){
                     {/* Second Row - Column 1*/}
                     <View style={{backgroundColor: 'red'}}>
                         <Text style={{color: props.titleColor || 'white', fontSize: 13}}>
-                            {OrderData.customerName}
+                            CustomerID : {OrderData.CustomerProfile.name}
                         </Text>
                     </View>
                     <View style={{backgroundColor: 'blue'}}>

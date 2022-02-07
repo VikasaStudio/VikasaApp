@@ -17,7 +17,7 @@ export default function() {
     const globalContextValue = useContext(GlobalContext);
     const [isLoading, setLoading] = useState(false);
 
-    const {items, selectedItems, selectItem, unselectItem, deleteItem} = useFetchedInventoryItems(new Map<string, any>(), {storeId: 'fgdfgdfgd'});
+    const {items, selectedItems, selectItem, unselectItem, deleteItem} = useFetchedInventoryItems(new Map<string, any>(), null);
     
     return(
         <View style={{

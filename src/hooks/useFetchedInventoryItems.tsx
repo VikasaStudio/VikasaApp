@@ -3,7 +3,7 @@ import { getItems, deleteItem as DeleteItem} from "../utils/networking";
 import { GlobalContext } from '../context/GlobalContext';
 
 export function useFetchedInventoryItems(initialVal : Map<string,any>, 
-    initialFilter : any | null)
+    initialFilter : any)
 {
     //dict of fetched items.
     const [items, setItems] = useState(new Map<string, any>(initialVal));
@@ -28,6 +28,9 @@ export function useFetchedInventoryItems(initialVal : Map<string,any>,
     useEffect(() => {
         var toLoad = true;
         async function loadData(){
+            if(storeId == null)
+                return;
+
             let res = await getItems({offset, limit, storeId}).catch(err=>{
                 console.error('Error', err);
             });
