@@ -27,9 +27,10 @@ import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 
 import { Button } from 'react-native';
 import InventoryContextProvider, { InventoryContext } from './src/context/InventoryContext';
+import InventoryFilterModal from './src/components/Inventory/InventoryFilterModal';
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialTopTabNavigator();
-
+import { useNavigation } from '@react-navigation/native';
 
 function OrderNavigator(props: any){
   return (
@@ -70,26 +71,34 @@ function OrderNavigator(props: any){
   );
 }
 
-function InventoryNavigator(props : any){
+function InventoryNavigator(props : any)
+{
+  const navigation = useNavigation<any>();
   return (
     <InventoryContextProvider>
       <Stack.Navigator initialRouteName={CONFIG.Screens.Inventory.name}>
-        <Stack.Screen name={CONFIG.Screens.Inventory.name} component={CONFIG.Screens.Inventory.component} options={{
-          headerTitle:'My Inventory',
-          headerRight: ()=>{
-            return <Button onPress={() => {
-              console.log('filter record')
-            }}
-            title="Info"
-            color="red" />;
-          }}}/>
-        <Stack.Screen name={CONFIG.Screens.AddItem.name} component={CONFIG.Screens.AddItem.component} options={{
-          headerTitle:'Add Item'
-        }}/>
+        <Stack.Group> 
+          <Stack.Screen name={CONFIG.Screens.Inventory.name} component={CONFIG.Screens.Inventory.component} options={{
+            headerTitle:'My Inventory',
+            headerRight: ()=>{
+              return <Button onPress={() => {
+                navigation.navigate('InventoryFilterModal');
+              }}
+              title="Filters"
+              color="red" />;
+            }}}/>
+          <Stack.Screen name={CONFIG.Screens.AddItem.name} component={CONFIG.Screens.AddItem.component} options={{
+            headerTitle:'Add Item'
+          }}/>
+        </Stack.Group>
+        <Stack.Group screenOptions={{presentation:'modal'}}>
+          <Stack.Screen options={{headerTitle:'Filter Inventory'}} name="InventoryFilterModal" component={InventoryFilterModal}/>
+        </Stack.Group>
       </Stack.Navigator>
     </InventoryContextProvider>
   )
 }
+
 export default function App() {
   return (
       <GlobalContextProvider>
