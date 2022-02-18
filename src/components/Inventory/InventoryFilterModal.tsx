@@ -5,12 +5,13 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {
     Text,
     View,
-    Button
+    Button,
+    ActivityIndicator
   } from 'react-native';
 import {InventoryContext} from '../../context/InventoryContext';
 import {GlobalContext} from '../../context/GlobalContext';
 import { getInventories, getShops } from '../../utils/networking';
-
+import {useActivityIndicator} from '../../hooks/useActivityIndicator';
 
 export default function InventoryFilterModal(props : any)
 {
@@ -32,29 +33,34 @@ export default function InventoryFilterModal(props : any)
     const {filter} = useContext(InventoryContext);
     const globalContextValue = useContext(GlobalContext);
 
+    const activityLoaderController = useActivityIndicator(0);
+
     //Fetch Shops whenever modal is displayed.
     useEffect(()=>{
         
         var toLoad = true;
         async function getVendorShops() {
+            activityLoaderController.startLoading();
             let res = await getShops(globalContextValue).catch(err=>{
                 console.log('error while fetching shops ', err);
             })
-            if(!toLoad)
+            activityLoaderController.endLoading();
+            if(!toLoad){
                 return;
+            }
             if(!res) {
                 setShopDropdownItems([]);
                 return;
             }
-
+            activityLoaderController.startLoading();
             let resArray = res.data.map((item: { displayName: any; storeId: any; }) =>{
                 return {
                     'label': item.displayName, 
                     'value': item.storeId
                 }
             });
-
             setShopDropdownItems(resArray);
+            activityLoaderController.endLoading();
         }
         getVendorShops();
         return ()=>{toLoad = false}
@@ -67,11 +73,12 @@ export default function InventoryFilterModal(props : any)
             if(!shopDropdownSelectedValue) 
                 return;
 
+            activityLoaderController.startLoading();
             filter.setStoreId(shopDropdownSelectedValue);
-
             let res = await getInventories(shopDropdownSelectedValue).catch(err=>{
                 console.log('failed to fetch inv. ', err);
             })
+            activityLoaderController.endLoading();
             if(!toLoad)
                 return;
             if(!res) {
@@ -79,12 +86,14 @@ export default function InventoryFilterModal(props : any)
                 return;
             }
 
+            activityLoaderController.startLoading();
             let resArray = res.data.map((item: { displayName: any; inventoryId: any; }) =>{
                 return {
                     'label': item.displayName, 
                     'value': item.inventoryId
                 }
             });
+            activityLoaderController.endLoading();
 
             setInvDropdownItems(resArray);
         }
@@ -97,7 +106,6 @@ export default function InventoryFilterModal(props : any)
     }, [invDropdownSelectedValue])
     return (
     <View style={{flex:1}}>
-
         {/* Set Filters */}
         <View style={{flex:1}}>
 
@@ -149,6 +157,7 @@ export default function InventoryFilterModal(props : any)
             
         </View>
 
+        { activityLoaderController.pending > 0 ?<ActivityIndicator size="large" color="red"/>: <></>}
         {/* Ordered Items Table */}
         <Button title="Dismiss" onPress={()=> navigation.goBack()}/>
 
