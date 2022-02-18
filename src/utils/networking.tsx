@@ -3,13 +3,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SetCookieParser from "set-cookie-parser"
 
 const getParsedCookiesMap = function(response : Response) {
-    console.log('---------- get parsed cookies map -------------')
-    console.log('response headers : ',response);
+    console.log('[Networking]: ---------- get parsed cookies map -------------')
+    console.log('[Networking]: response headers : ',response);
     var combinedCookieHeader : any = response.headers.get('Set-Cookie');
     var splitCookieHeaders = SetCookieParser.splitCookiesString(combinedCookieHeader)
     var cookies = SetCookieParser.parse(splitCookieHeaders);
     var cookieMap = new Map<any, any>();
-    console.log('cookies', cookies);
+    console.log('[Networking]: cookies', cookies);
     cookies.forEach(cookie => {
         cookieMap.set(cookie.name, cookie);
     });
@@ -126,7 +126,7 @@ const serializeCookie = function(name:string, val:string, options:any) {
 
 export async function AttemptLocalLogin(username:string, password:string, globalContextValue : any) 
 {
-    console.log('Attempting Local Login');
+    console.log('[Networking]: Attempting Local Login');
     //check if any access token stored.
     var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
     var parsedAccessTokenCookie = null;
@@ -154,11 +154,11 @@ export async function AttemptLocalLogin(username:string, password:string, global
             "password": password,
             "strategy": "local"
         })
-    }).catch(err=>{console.log(err)})
+    }).catch(err=>{console.log('[Networking]: ',err)})
     if(!res)
         return;
     const responseJSON = await res.json();
-    console.log(responseJSON)
+    console.log('[Networking]: ',responseJSON)
     // Either user was already logged in or this is a new login.
     if(res.status == 200) {
         const cookies = getParsedCookiesMap(res);
@@ -285,7 +285,7 @@ export async function checkIfTokenValid(globalContextValue : any) {
         await logout(globalContextValue);
     }
     catch(err) {
-        console.log('Error while verifying if token valid. : ', err);
+        console.log('[Networking]: Error while verifying if token valid. : ', err);
         globalContextValue.setUsername(null)
     }
 }
@@ -331,7 +331,7 @@ export async function createEmptyStore(data : any){
  */
  export async function getShops(globalContextValue:any) 
  {
-    console.log('Fetching Shops...');
+    console.log('[Networking]: Fetching Shops...');
 
     //check if any access token stored.
     var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
@@ -339,7 +339,7 @@ export async function createEmptyStore(data : any){
     if(storedAccessTokenCookie != null)
         parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
     
-    console.log(`parsed AccessToken : ${parsedAccessTokenCookie}`)
+    console.log(`[Networking]: parsed AccessToken : ${parsedAccessTokenCookie}`)
 
     const header = new Headers({
         'Content-Type': 'application/json', 
@@ -356,20 +356,20 @@ export async function createEmptyStore(data : any){
         method: 'GET',
         headers: header
     }).catch(err=>{
-        console.log('Failed to fetchh shop ', err);
+        console.log('[Networking]: Failed to fetchh shop ', err);
     });
     if(!res)
         throw new Error('Network error.');
 
     const responseJSON = await res.json();
-    console.log('Shop Fetch Complete');
+    console.log('[Networking]: Shop Fetch Complete');
     if(res.status != 200)
-        throw new Error("Failed to fetch store details, "+responseJSON)
+        throw new Error("[Networking]: Failed to fetch store details, "+responseJSON)
     return responseJSON;
 }
 
 export async function getInventories(storeId:string){
-    console.log('Fetching Inventory...');
+    console.log('[Networking]: Fetching Inventory...');
 
     //check if any access token stored.
     var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
@@ -392,7 +392,7 @@ export async function getInventories(storeId:string){
         method: 'GET',
         headers: header
     }).catch(err=>{
-        console.log('Fetch Exception :');
+        console.log('[Networking]: Fetch Exception :');
         console.error(err);
     });
     if(!res)
@@ -400,8 +400,8 @@ export async function getInventories(storeId:string){
 
     const responseJSON = await res.json();
     if(res.status != 200){
-        console.log('response status code is not 200')
-        throw new Error("Failed to fetch Inventory details, "+responseJSON)
+        console.log('[Networking]: response status code is not 200')
+        throw new Error("[Networking]: Failed to fetch Inventory details, "+responseJSON)
     }
     return responseJSON;
 }
@@ -425,7 +425,7 @@ export async function createEmptyInventory(data : any){
         })
     });
     if(res.status != 200){
-        throw new Error("Inventory could not be created");
+        throw new Error("[Networking]: Inventory could not be created");
     }
     return res;
 }
@@ -472,7 +472,7 @@ export async function createItem(data: { displayName: any; category: any; varian
 }
 
 export async function deleteItem(data : any){
-    console.log('Deleting Item...');
+    console.log('[Networking]: Deleting Item...');
 
     //check if any access token stored.
     var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
@@ -503,10 +503,10 @@ export async function deleteItem(data : any){
     });
     var resJSON = await res.json();
 
-    console.log(resJSON)
+    console.log('[Networking]: ',resJSON)
 
     if(res.status != 200){
-        throw new Error("Item could not be deleted or does not exist.");
+        throw new Error("[Networking]: Item could not be deleted or does not exist.");
     }
     return resJSON;
 }
@@ -567,7 +567,7 @@ export async function verifyOTP(key : string, otp : string){
             reject('OTP Verification Failed.');
         }
         catch(err){
-            console.error(err);
+            console.error('[Networking]: ',err);
             reject('Unexpected Error while verifying OTP. Try Again');
         }
     });
@@ -598,7 +598,7 @@ export async function registerVendor(data:any){
             return reject('Unable to Register, Try again with new username.');
         }       
         catch(err){
-            console.log(err);
+            console.log('[Networking]: ',err);
             reject(err);
         }
     });
@@ -621,7 +621,7 @@ export async function createInventory() {
     
 }
 export async function getItems(filter:any){
-    console.log('Network Call : getItems with filters : ', filter);
+    console.log('[Networking]: getItems with filters : ', filter);
 
     //check if any access token stored.
     var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
@@ -650,28 +650,28 @@ export async function getItems(filter:any){
     }
     if(filter.limit != null)
         url=`${url}&limit=${filter.limit}`
-    console.log('-url-', url);
+    console.log('[Networking]: -url-', url);
     const res = await fetch(url, {
         method: 'GET',
         headers: header
     }).catch(err=>{
-        console.log('Fetch Exception :');
+        console.log('[Networking]: Fetch Exception :');
         console.error(err);
     });
     if(!res)
-        throw new Error('Network error.');
+        throw new Error('[Networking]: Network error.');
 
     const responseJSON = await res.json();
 
     if(res.status != 200){
-        console.log('response status code is not 200')
-        throw new Error("Failed to fetch Item details, "+responseJSON)
+        console.log('[Networking]: response status code is not 200')
+        throw new Error("[Networking]: Failed to fetch Item details, "+responseJSON)
     }
     return responseJSON;
 }
 //-------------- Orders CRUD
 export async function fetchOrders(filter: { offset: number; limit: number; vendorId: any; storeId: any; orderState: any; orderType: any; }){
-    console.log('Fetching Orders...');
+    console.log('[Networking]: Fetching Orders...');
 
     //check if any access token stored.
     var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
@@ -705,7 +705,7 @@ export async function fetchOrders(filter: { offset: number; limit: number; vendo
     });
     const responseJSON = await res.json();
 
-    console.log('orders ', responseJSON)
+    console.log('[Networking]: orders ', responseJSON)
     if(res.status == 201 || res.status == 200)
         return responseJSON;
     return [];
