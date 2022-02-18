@@ -305,12 +305,24 @@ export async function logout(globalContextValue : any){
  * @summary Creates empty store with no inventory & data.
  */
 export async function createEmptyStore(data : any){
+    //check if any access token stored.
+    var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
+    var parsedAccessTokenCookie = null;
+    if(storedAccessTokenCookie != null)
+        parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
+    const header = new Headers({
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    });
+
+    if(parsedAccessTokenCookie)
+    {
+        var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
+        header.append('Cookie', stringifiedCookie)
+    }
     const res = await fetch(`${CONFIG.VikasaAPI}/shop`, {
         method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type':'application/json'
-        },
+        headers: header,
         body: JSON.stringify({
             vendorId: data.vendorId,
             localDomain: data.localDomain,
@@ -319,7 +331,7 @@ export async function createEmptyStore(data : any){
             imagesUrl: data.imagesUrl || null
         })
     });
-    if(res.status != 200)
+    if(!(res.status in [201, 200]))
         throw new Error("Failed to create empty store")
     return res;
 }

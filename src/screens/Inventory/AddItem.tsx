@@ -67,6 +67,9 @@ export default function(props : any){
     const [itemPrice, setItemPrice] = useState('')
     const [itemDesc, setItemDesc] = useState('')
 
+    const [newShopName, setNewShopName] = useState('')
+    const [newInventoryName, setNewInventoryName] = useState('')
+
     const globalContextValue = useContext(GlobalContext);
 
     // Load Shops and Inventory
@@ -166,6 +169,7 @@ export default function(props : any){
                                 />
                                 <TextInput style={Styles.textInputStyle}
                                     placeholder="New Shop"
+                                    onChangeText={setNewShopName}
                                 />
                             </ToggableViewContainer>
                         </View>
@@ -212,6 +216,7 @@ export default function(props : any){
                                 />
                                 <TextInput style={Styles.textInputStyle}
                                     placeholder="New Inventory"
+                                    onChangeText={setNewInventoryName}
                                 />
                             </ToggableViewContainer>
                         </View>
@@ -288,6 +293,26 @@ export default function(props : any){
 
                         }
                         return;
+                    }
+                    else if(isNewShopRequired){
+                        if(newShopName.length < 3){
+                            console.log('Shop name must be atleast three character long');
+                            return;
+                        }
+                        let shopResponse = await createEmptyStore({
+                            vendorId: globalContextValue.username,
+                            localDomain: 'emptyDomain',
+                            displayName: newShopName,
+                            description: 'My shop',
+                            imagesUrl: 'http local image'
+                        }).catch(err=>{
+                            console.error(err);
+                        })
+                        if(shopResponse == null){
+                            console.log('Failed to create a new shop');
+                            return;
+                        }
+                        console.log(shopResponse)
                     }
                 }}/>
             </View>
