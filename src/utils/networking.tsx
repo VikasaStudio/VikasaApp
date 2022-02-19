@@ -320,7 +320,7 @@ export async function createEmptyStore(data : any){
         var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
         header.append('Cookie', stringifiedCookie)
     }
-    const res = await fetch(`${CONFIG.VikasaAPI}/shop`, {
+    let res = await fetch(`${CONFIG.VikasaAPI}/shop`, {
         method: 'POST',
         headers: header,
         body: JSON.stringify({
@@ -333,7 +333,7 @@ export async function createEmptyStore(data : any){
     });
     if(!(res.status in [201, 200]))
         throw new Error("Failed to create empty store")
-    return res;
+    return await res.json();
 }
 
 /**
@@ -424,12 +424,29 @@ export async function getInventories(storeId:string){
  * @summary Creates empty inventory within a store, with no items added.
  */
 export async function createEmptyInventory(data : any){
+
+    console.log('[Networking]: Creating Empty Inventory...');
+
+    //check if any access token stored.
+    var storedAccessTokenCookie = await AsyncStorage.getItem(CONFIG.SharedPreferenceKeys.AccessToken);
+    var parsedAccessTokenCookie = null;
+    if(storedAccessTokenCookie != null)
+        parsedAccessTokenCookie = JSON.parse(storedAccessTokenCookie);
+
+    const header = new Headers({
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json'
+    });
+
+    if(parsedAccessTokenCookie)
+    {
+        var stringifiedCookie = serializeCookie(parsedAccessTokenCookie.name, parsedAccessTokenCookie.value, parsedAccessTokenCookie);
+        header.append('Cookie', stringifiedCookie)
+    }
+
     const res = await fetch(`${CONFIG.VikasaAPI}/shop/inventory`, {
         method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type':'application/json'
-        },
+        headers: header,
         body: JSON.stringify({
             vendorId: data.vendorId,
             storeId: data.storeId,
@@ -439,7 +456,7 @@ export async function createEmptyInventory(data : any){
     if(res.status != 200){
         throw new Error("[Networking]: Inventory could not be created");
     }
-    return res;
+    return await res.json();
 }
 export async function createItem(data: { displayName: any; category: any; variant: any; quantity: any; pricePerUnit: any; description: any; storeId: any; inventoryId: any; itemType?: any; MRP?: any; currency?: any; }) {
     //check if any access token stored.

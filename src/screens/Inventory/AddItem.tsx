@@ -14,7 +14,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import CheckBox from 'react-native-check-box';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
-import { createEmptyStore, createItem, getInventories, getShops } from '../../utils/networking';
+import { createEmptyInventory, createEmptyStore, createItem, getInventories, getShops } from '../../utils/networking';
 
 const Styles = StyleSheet.create({
     textInputStyle:{
@@ -273,6 +273,44 @@ export default function(props : any){
 
             <View style={{flex:1}}>
                 <Button title="Create" onPress={async (e : any)=>{
+                    
+                    var isNewShopRequired : boolean = (shopIndex === 1);
+                    var isNewInvRequired : boolean = (invIndex === 1);
+                    if(isNewShopRequired && newShopName.length < 3){
+                        console.log('Shop name must be atleast three character long');
+                        return;
+                    }
+                    var shopResponse:any = shopDropdownSelectedValue;
+                    if(isNewShopRequired){
+                        shopResponse = await createEmptyStore({
+                            vendorId: globalContextValue.username,
+                            displayName: newShopName,
+                            description: 'My shop',
+                            imagesUrl: 'http local image'
+                        }).catch(err=>{
+                            console.error(err);
+                        })
+                        if(!shopResponse)
+                            return;
+                        shopResponse = shopResponse.data.storeId;
+                    }
+
+                    var inventoryResponse:any = invDropdownSelectedValue;
+                    if(isNewInvRequired){
+                        inventoryResponse = await createEmptyInventory({
+                            vendorId: globalContextValue.username,
+                            storeId: shopResponse,
+                            inventoryName: newInventoryName
+                        }).catch(err=>{
+                            console.log(err);
+                        });
+                        if(!inventoryResponse)
+                            return;
+                        inventoryResponse = inventoryResponse.data.inventoryId;
+                    }
+                    if(!inventoryResponse){
+                        return;
+                    }
                     // Create Shop
                     var itemDetail = {
                         displayName: itemName,
@@ -281,39 +319,19 @@ export default function(props : any){
                         quantity: itemQuantity,
                         pricePerUnit: itemPrice,
                         description: itemDesc,
-                        storeId: shopDropdownSelectedValue,
-                        inventoryId: invDropdownSelectedValue
+
+                        storeId: shopResponse,
+                        inventoryId: inventoryResponse
                     }
                     console.log(itemDetail)
-                    var isNewShopRequired : boolean = (shopIndex === 1);
-                    var isNewInvRequired : boolean = (invIndex === 1);
-                    if(!isNewShopRequired && !isNewInvRequired) {
-                        var res = await createItem(itemDetail).catch(err=>{console.log('Error while creating item : ', err)});
-                        if(res){
-
-                        }
+                    var res = await createItem(itemDetail).catch(err=>{
+                        console.log('Error while creating item : ', err)
+                    });
+                    if(!res){
                         return;
                     }
-                    else if(isNewShopRequired){
-                        if(newShopName.length < 3){
-                            console.log('Shop name must be atleast three character long');
-                            return;
-                        }
-                        let shopResponse = await createEmptyStore({
-                            vendorId: globalContextValue.username,
-                            localDomain: 'emptyDomain',
-                            displayName: newShopName,
-                            description: 'My shop',
-                            imagesUrl: 'http local image'
-                        }).catch(err=>{
-                            console.error(err);
-                        })
-                        if(shopResponse == null){
-                            console.log('Failed to create a new shop');
-                            return;
-                        }
-                        console.log(shopResponse)
-                    }
+
+                    console.log('SUCCESS : ',res);
                 }}/>
             </View>
         </ScrollView>
