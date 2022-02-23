@@ -38,7 +38,7 @@ export default function(props: any) {
     }, [props.selectedItems]);
 
     return (
-        <TouchableOpacity onPress={props.onPress}>
+        <TouchableOpacity onPress={()=>{props.onPress(props)}}>
             <View style={{flex:1, flexDirection:'row'}}>
                 {/*left cell*/}
                 <View style={styles.cell2x}>

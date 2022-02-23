@@ -11,13 +11,14 @@ import InventoryItem from '../../components/Inventory/InventoryItem';
 import ToggableViewContainer from '../../components/ToggableViewContainer';
 import { GlobalContext } from '../../context/GlobalContext';
 import { InventoryContext } from '../../context/InventoryContext';
+import { useActivityIndicator } from '../../hooks/useActivityIndicator';
 
 export default function(props:any) {
     
     const navigation = useNavigation<any>();
     const globalContextValue = useContext(GlobalContext);
 
-    const [isLoading, setLoading] = useState(false);
+    var {pending, startLoading, endLoading} = useActivityIndicator(0);
 
     const {items, selectedItems, selectItem, unselectItem, deleteItem, filter} = useContext(InventoryContext);
 
@@ -49,10 +50,14 @@ export default function(props:any) {
                         selectedItems={selectedItems}
 
                         onItemSelect={(e: { itemId: string; })=>{
-                            
+                            console.log(e);
                         }}
                         onItemUnselect={(e:any)=>{
                             
+                        }}
+
+                        onPress={(data:any)=>{
+                            console.log('Pressed : ', data);
                         }}
                     /> 
                 )}
@@ -62,7 +67,7 @@ export default function(props:any) {
                     console.log('reached end', info);
                 }} />
 
-                <ToggableViewContainer index={isLoading ? 0 : 1}>
+                <ToggableViewContainer index={pending > 0 ? 0 : 1}>
                     <View style={{backgroundColor: 'transparent'}}>
                         <ActivityIndicator size="large" 
                         style={{padding:10, backgroundColor: 'transparent'}} />
@@ -86,8 +91,11 @@ export default function(props:any) {
                                     var dup = selectedItems;
                                     dup.forEach( async (itemId:any)=>{
                                         console.log(itemId)
+                                        startLoading();
                                         let deleted = await deleteItem(itemId)
+                                        endLoading();
                                     });
+                                    
                                 }}></Button>
                         </View>
                         <></>
@@ -98,10 +106,11 @@ export default function(props:any) {
                                 unselectItem();
                             }}/>
                             <Button title="Select All" onPress={()=>{
-                                console.log('select all items');
+                                startLoading();
                                 items.forEach( (item: any, itemId: any) => {  
                                     selectItem(itemId);
                                 })
+                                endLoading();
                             }}/>
 
                         </ToggableViewContainer>
