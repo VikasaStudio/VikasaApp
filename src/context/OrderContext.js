@@ -13,12 +13,11 @@ export const OrderContext = createContext();
  */
  export default function OrderContextProvider(props){
 
-    var {items, selectedItems, unselectItem, selectItem, deleteItem} = useFetchedOrders(null, {storeId: props && props.storeId ? props.storeId : null})
+    const value = useFetchedOrders(null, {storeId: props && props.storeId ? props.storeId : null})
+    //{items, selectedItems, unselectItem, selectItem, deleteItem}
 
     return (
-        <OrderContext.Provider value = {{
-            items, selectedItems, unselectItem, selectItem, deleteItem
-        }}>
+        <OrderContext.Provider value = {value}>
             {props.children}
         </OrderContext.Provider>
     )

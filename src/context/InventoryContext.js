@@ -13,12 +13,11 @@ export const InventoryContext = createContext();
  */
  export default function InventoryContextProvider(props){
 
-    const {items, selectedItems, selectItem, unselectItem, deleteItem, filter} = useFetchedInventoryItems();
-
+    const value= useFetchedInventoryItems();
+    //{items, selectedItems, selectItem, unselectItem, deleteItem, filter} 
+    
     return (
-        <InventoryContext.Provider value = {{
-            items, selectedItems, selectItem, unselectItem, deleteItem, filter
-        }}>
+        <InventoryContext.Provider value = {value}>
             {props.children}
         </InventoryContext.Provider>
     )
